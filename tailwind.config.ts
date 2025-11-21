@@ -6,56 +6,64 @@ export default {
     "./pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./components/**/*.{js,ts,jsx,tsx,mdx}",
     "./app/**/*.{js,ts,jsx,tsx,mdx}",
-    "./src/**/*.{js,ts,jsx,tsx,mdx}",
   ],
   theme: {
     extend: {
       colors: {
-        background: "hsl(var(--background))",
-        foreground: "hsl(var(--foreground))",
-        card: {
-          DEFAULT: "hsl(var(--card))",
-          foreground: "hsl(var(--card-foreground))",
-        },
-        popover: {
-          DEFAULT: "hsl(var(--popover))",
-          foreground: "hsl(var(--popover-foreground))",
-        },
-        primary: {
-          DEFAULT: "hsl(var(--primary))",
-          foreground: "hsl(var(--primary-foreground))",
-        },
-        secondary: {
-          DEFAULT: "hsl(var(--secondary))",
-          foreground: "hsl(var(--secondary-foreground))",
-        },
-        muted: {
-          DEFAULT: "hsl(var(--muted))",
-          foreground: "hsl(var(--muted-foreground))",
+        // AICredy Design System - Identidade Visual
+        brand: {
+          DEFAULT: "#0554f2", // Azul principal
+          50: "#e6f0fe",
+          100: "#cce1fd",
+          200: "#99c3fb",
+          300: "#66a5f9",
+          400: "#3387f7",
+          500: "#0554f2", // Principal
+          600: "#0443c2",
+          700: "#033291",
+          800: "#022261",
+          900: "#011130",
         },
         accent: {
-          DEFAULT: "hsl(var(--accent))",
-          foreground: "hsl(var(--accent-foreground))",
+          DEFAULT: "#bdf26d", // Verde accent
+          50: "#f7fef0",
+          100: "#effde1",
+          200: "#dffbc3",
+          300: "#cff9a5",
+          400: "#bdf26d", // Principal
+          500: "#a8e84f",
+          600: "#8dd32f",
+          700: "#6ba824",
+          800: "#4a7d19",
+          900: "#28520e",
         },
-        destructive: {
-          DEFAULT: "hsl(var(--destructive))",
-          foreground: "hsl(var(--destructive-foreground))",
+        background: "#FAFBFC", // Fundo geral (mais clean)
+        surface: "#FFFFFF", // Componentes
+        border: "#E5E7EB", // Bordas sutis
+        text: {
+          primary: "#0F172A", // Texto principal (mais escuro)
+          secondary: "#64748B", // Texto secundário
+          muted: "#94A3B8", // Texto desabilitado
         },
-        border: "hsl(var(--border))",
-        input: "hsl(var(--input))",
-        ring: "hsl(var(--ring))",
-        chart: {
-          "1": "hsl(var(--chart-1))",
-          "2": "hsl(var(--chart-2))",
-          "3": "hsl(var(--chart-3))",
-          "4": "hsl(var(--chart-4))",
-          "5": "hsl(var(--chart-5))",
-        },
+        success: "#10B981",
+        warning: "#F59E0B",
+        error: "#EF4444",
+        info: "#0554f2",
       },
       borderRadius: {
-        lg: "var(--radius)",
-        md: "calc(var(--radius) - 2px)",
-        sm: "calc(var(--radius) - 4px)",
+        xl: "24px",
+        "2xl": "32px",
+        pill: "999px",
+      },
+      fontSize: {
+        "display": ["28px", { lineHeight: "1.2", fontWeight: "700" }],
+        "title": ["24px", { lineHeight: "1.3", fontWeight: "600" }],
+        "subtitle": ["18px", { lineHeight: "1.5", fontWeight: "500" }],
+        "body": ["16px", { lineHeight: "1.6", fontWeight: "400" }],
+      },
+      spacing: {
+        "18": "4.5rem",
+        "22": "5.5rem",
       },
     },
   },

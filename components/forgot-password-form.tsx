@@ -38,7 +38,7 @@ export function ForgotPasswordForm({
       if (error) throw error;
       setSuccess(true);
     } catch (error: unknown) {
-      setError(error instanceof Error ? error.message : "An error occurred");
+      setError(error instanceof Error ? error.message : "Ocorreu um erro");
     } finally {
       setIsLoading(false);
     }
@@ -47,53 +47,60 @@ export function ForgotPasswordForm({
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       {success ? (
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-2xl">Check Your Email</CardTitle>
-            <CardDescription>Password reset instructions sent</CardDescription>
+        <Card className="border-0 shadow-soft">
+          <CardHeader className="text-center">
+            <div className="w-16 h-16 bg-brand-50 rounded-full flex items-center justify-center mx-auto mb-4">
+              <i className="fi fi-rr-envelope text-3xl text-brand"></i>
+            </div>
+            <CardTitle className="text-display text-text-primary">Verifique seu e-mail</CardTitle>
+            <CardDescription className="text-body text-text-secondary">
+              Instruções de redefinição de senha enviadas
+            </CardDescription>
           </CardHeader>
           <CardContent>
-            <p className="text-sm text-muted-foreground">
-              If you registered using your email and password, you will receive
-              a password reset email.
+            <p className="text-body text-text-secondary text-center mb-6">
+              Se você se registrou usando seu e-mail e senha, receberá um e-mail com instruções para redefinir sua senha.
             </p>
+            <Link href="/auth/login" className="btn-primary w-full block text-center">
+              Voltar para login
+            </Link>
           </CardContent>
         </Card>
       ) : (
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-2xl">Reset Your Password</CardTitle>
-            <CardDescription>
-              Type in your email and we&apos;ll send you a link to reset your
-              password
+        <Card className="border-0 shadow-soft">
+          <CardHeader className="text-center">
+            <CardTitle className="text-display text-text-primary">Esqueceu sua senha?</CardTitle>
+            <CardDescription className="text-body text-text-secondary">
+              Digite seu e-mail e enviaremos um link para redefinir sua senha
             </CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleForgotPassword}>
               <div className="flex flex-col gap-6">
                 <div className="grid gap-2">
-                  <Label htmlFor="email">Email</Label>
+                  <Label htmlFor="email" className="text-text-primary">E-mail</Label>
                   <Input
                     id="email"
                     type="email"
-                    placeholder="m@example.com"
+                    placeholder="seu@email.com"
                     required
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
+                    className="input"
                   />
                 </div>
-                {error && <p className="text-sm text-red-500">{error}</p>}
-                <Button type="submit" className="w-full" disabled={isLoading}>
-                  {isLoading ? "Sending..." : "Send reset email"}
+                {error && <p className="text-sm text-red-600 bg-red-50 p-3 rounded-xl">{error}</p>}
+                <Button type="submit" className="btn-primary w-full" disabled={isLoading}>
+                  {isLoading ? "Enviando..." : "Enviar e-mail de redefinição"}
                 </Button>
               </div>
-              <div className="mt-4 text-center text-sm">
-                Already have an account?{" "}
+              <div className="mt-6 text-center text-body text-text-secondary">
+                Lembrou sua senha?{" "}
                 <Link
                   href="/auth/login"
-                  className="underline underline-offset-4"
+                  className="text-brand hover:text-brand-700 font-medium transition-colors"
                 >
-                  Login
+                  Entrar
                 </Link>
               </div>
             </form>
