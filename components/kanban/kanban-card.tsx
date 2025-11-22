@@ -34,15 +34,21 @@ export function KanbanCard({ contact, onViewDetails, onToggleAi, aiPaused = fals
     e.stopPropagation();
     if (!contact.phone || !onToggleAi) return;
 
+    // Salvar estado anterior para revert
+    const previousState = localAiPaused;
+    const currentlyActive = !localAiPaused; // Se não está pausado, está ativo
+
     setIsTogglingAi(true);
+    
+    // Optimistic update - muda imediatamente
+    setLocalAiPaused(!localAiPaused);
+
     try {
-      // Optimistic update
-      const currentlyActive = !localAiPaused; // Se não está pausado, está ativo
-      setLocalAiPaused(!localAiPaused);
       await onToggleAi(contact.phone, currentlyActive);
+      // Sucesso - mantém o novo estado
     } catch (error) {
-      // Revert on error
-      setLocalAiPaused(localAiPaused);
+      // Revert on error - volta ao estado anterior
+      setLocalAiPaused(previousState);
       console.error('Error toggling AI:', error);
     } finally {
       setIsTogglingAi(false);
@@ -58,9 +64,10 @@ export function KanbanCard({ contact, onViewDetails, onToggleAi, aiPaused = fals
       className={`
         bg-white rounded-lg p-3 mb-2 cursor-pointer
         hover:bg-brand-50
-        transition-all duration-200
+        transition-all duration-300 ease-in-out
         ${isDragging ? 'opacity-50 rotate-2' : ''}
-        ${localAiPaused ? 'border-l-4 border-orange-400' : ''}
+        ${localAiPaused ? 'border-l-4 border-orange-400' : 'border-l-4 border-transparent'}
+        ${isTogglingAi ? 'opacity-75' : ''}
       `}
     >
       <div className="flex items-start justify-between gap-2">
@@ -84,12 +91,14 @@ export function KanbanCard({ contact, onViewDetails, onToggleAi, aiPaused = fals
             onClick={handleToggleAi}
             disabled={isTogglingAi}
             className={`
-              flex-shrink-0 p-1.5 rounded-md transition-colors
+              flex-shrink-0 p-1.5 rounded-md 
+              transition-all duration-200 ease-in-out
+              transform hover:scale-110 active:scale-95
               ${localAiPaused 
-                ? 'bg-orange-100 text-orange-600 hover:bg-orange-200' 
-                : 'bg-green-100 text-green-600 hover:bg-green-200'
+                ? 'bg-orange-100 text-orange-600 hover:bg-orange-200 hover:shadow-md' 
+                : 'bg-green-100 text-green-600 hover:bg-green-200 hover:shadow-md'
               }
-              ${isTogglingAi ? 'opacity-50 cursor-not-allowed' : ''}
+              ${isTogglingAi ? 'opacity-50 cursor-not-allowed scale-100' : ''}
             `}
             title={localAiPaused ? 'Ativar IA' : 'Pausar IA'}
           >
