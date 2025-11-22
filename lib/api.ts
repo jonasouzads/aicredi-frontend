@@ -181,6 +181,18 @@ class APIClient {
     });
   }
 
+  // ==================== CONVERSATIONS ====================
+  async toggleAiStatus(phone: string, active: boolean): Promise<{ phone: string; active: boolean; updated: number }> {
+    return this.request('/v1/conversations/ai-status', {
+      method: 'PATCH',
+      body: JSON.stringify({ phone, active }),
+    });
+  }
+
+  async searchConversations(searchTerm: string): Promise<any[]> {
+    return this.request(`/v1/conversations/search?q=${encodeURIComponent(searchTerm)}`);
+  }
+
   // ==================== DASHBOARD ====================
   async getRecentActivity(limit: number = 10) {
     return this.request<Activity[]>(`/v1/dashboard/activity?limit=${limit}`);

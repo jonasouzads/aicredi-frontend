@@ -1,11 +1,12 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useContacts, Contact } from '@/hooks/use-contacts';
 import { useToast } from '@/components/ui/toast';
 import { KanbanColumn } from '@/components/kanban/kanban-column';
 import { KanbanSkeleton } from '@/components/kanban/kanban-skeleton';
 import { ContactDetailsModal } from '@/components/kanban/contact-details-modal';
+import { useDebounce } from '@/hooks/use-debounce';
 
 export default function KanbanPage() {
   const { 
@@ -16,12 +17,15 @@ export default function KanbanPage() {
     hasMore,
     fetchKanban, 
     loadMore,
-    updateStatus 
+    updateStatus,
+    toggleAiStatus 
   } = useContacts();
   const toast = useToast();
   const [selectedContact, setSelectedContact] = useState<Contact | null>(null);
   const [localKanbanData, setLocalKanbanData] = useState(kanbanData);
   const [localKanbanCounts, setLocalKanbanCounts] = useState(kanbanCounts);
+  const [searchTerm, setSearchTerm] = useState('');
+  const debouncedSearch = useDebounce(searchTerm, 300);
 
   useEffect(() => {
     fetchKanban();
@@ -123,6 +127,41 @@ export default function KanbanPage() {
     setSelectedContact(null);
   };
 
+  const handleToggleAi = useCallback(async (phone: string, currentlyActive: boolean) => {
+    try {
+      await toggleAiStatus(phone, !currentlyActive);
+      toast.success(
+        currentlyActive ? 'IA pausada' : 'IA ativada',
+        `A IA foi ${currentlyActive ? 'pausada' : 'ativada'} para este contato`
+      );
+      // Refetch para atualizar estado visual
+      await fetchKanban(false);
+    } catch (error: any) {
+      toast.error('Erro', error.message);
+      throw error;
+    }
+  }, [toggleAiStatus, toast, fetchKanban]);
+
+  // Filtrar dados localmente quando houver busca
+  const filteredKanbanData = useCallback(() => {
+    if (!localKanbanData || !debouncedSearch) return localKanbanData;
+
+    const searchLower = debouncedSearch.toLowerCase();
+    const filterContacts = (contacts: Contact[]) => 
+      contacts.filter(contact => 
+        contact.name?.toLowerCase().includes(searchLower) ||
+        contact.phone?.toLowerCase().includes(searchLower)
+      );
+
+    return {
+      lead: filterContacts(localKanbanData.lead),
+      in_progress: filterContacts(localKanbanData.in_progress),
+      completed: filterContacts(localKanbanData.completed),
+    };
+  }, [localKanbanData, debouncedSearch]);
+
+  const displayData = filteredKanbanData();
+
   if (isLoading) {
     return <KanbanSkeleton />;
   }
@@ -130,61 +169,79 @@ export default function KanbanPage() {
   return (
     <div className="h-full flex flex-col">
       {/* Header */}
-      <div className="flex items-center justify-between mb-6">
-        <div>
-          <h1 className="text-display text-text-primary mb-2">Kanban de Leads</h1>
-          <p className="text-body text-text-secondary">
-            Gerencie seus contatos por estágio do funil
-          </p>
+      <div className="mb-6">
+        <div className="flex items-center justify-between mb-4">
+          <div>
+            <h1 className="text-display text-text-primary mb-2">Kanban de Leads</h1>
+            <p className="text-body text-text-secondary">
+              Gerencie seus contatos por estágio do funil
+            </p>
+          </div>
         </div>
-        <button
-          onClick={() => fetchKanban()}
-          className="btn-secondary flex items-center gap-2"
-        >
-          <i className="fi fi-rr-refresh"></i>
-          Atualizar
-        </button>
+        
+        {/* Barra de Busca */}
+        <div className="relative">
+          <i className="fi fi-rr-search absolute left-3 top-1/2 -translate-y-1/2 text-text-secondary"></i>
+          <input
+            type="text"
+            placeholder="Buscar por nome ou telefone..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="w-full pl-10 pr-4 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-brand focus:border-transparent"
+          />
+          {searchTerm && (
+            <button
+              onClick={() => setSearchTerm('')}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-text-secondary hover:text-text-primary"
+            >
+              <i className="fi fi-rr-cross-small"></i>
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Kanban Board */}
       <div className="flex gap-4 overflow-x-auto flex-1 pb-6">
-        {localKanbanData && (
+        {displayData && (
           <>
             <KanbanColumn
               title="Novos Leads"
               icon="fi-rr-user-add"
               status="lead"
-              contacts={localKanbanData.lead}
+              contacts={displayData.lead}
               totalCount={localKanbanCounts?.lead || 0}
               onStatusChange={handleStatusChange}
               onViewDetails={handleViewDetails}
               onLoadMore={loadMore}
               isLoadingMore={isLoadingMore}
               hasMore={hasMore}
+              onToggleAi={handleToggleAi}
             />
             <KanbanColumn
               title="Em Atendimento"
               icon="fi-rr-time-forward"
               status="in_progress"
-              contacts={localKanbanData.in_progress}
+              contacts={displayData.in_progress}
               totalCount={localKanbanCounts?.in_progress || 0}
               onStatusChange={handleStatusChange}
               onViewDetails={handleViewDetails}
               onLoadMore={loadMore}
               isLoadingMore={isLoadingMore}
               hasMore={hasMore}
+              onToggleAi={handleToggleAi}
             />
             <KanbanColumn
               title="Concluídos"
               icon="fi-rr-check-circle"
               status="completed"
-              contacts={localKanbanData.completed}
+              contacts={displayData.completed}
               totalCount={localKanbanCounts?.completed || 0}
               onStatusChange={handleStatusChange}
               onViewDetails={handleViewDetails}
               onLoadMore={loadMore}
               isLoadingMore={isLoadingMore}
               hasMore={hasMore}
+              onToggleAi={handleToggleAi}
             />
           </>
         )}

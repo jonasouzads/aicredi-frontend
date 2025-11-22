@@ -15,6 +15,7 @@ interface KanbanColumnProps {
   onLoadMore: () => void;
   isLoadingMore: boolean;
   hasMore: boolean;
+  onToggleAi?: (phone: string, active: boolean) => Promise<void>;
 }
 
 export function KanbanColumn({
@@ -28,6 +29,7 @@ export function KanbanColumn({
   onLoadMore,
   isLoadingMore,
   hasMore,
+  onToggleAi,
 }: KanbanColumnProps) {
   const [isDragOver, setIsDragOver] = useState(false);
 
@@ -109,6 +111,8 @@ export function KanbanColumn({
                 key={contact.id}
                 contact={contact}
                 onViewDetails={onViewDetails}
+                onToggleAi={onToggleAi}
+                aiPaused={(contact as any).conversations?.[0]?.ai_paused || false}
               />
             ))}
             

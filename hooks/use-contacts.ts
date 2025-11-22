@@ -184,6 +184,14 @@ export function useContacts() {
     }
   };
 
+  const toggleAiStatus = async (phone: string, active: boolean) => {
+    try {
+      return await api.toggleAiStatus(phone, active);
+    } catch (err: any) {
+      throw new Error(err.message || 'Erro ao alterar status da IA');
+    }
+  };
+
   useEffect(() => {
     fetchContacts();
   }, []);
@@ -205,5 +213,6 @@ export function useContacts() {
     updateContact,
     updateStatus,
     deleteContact,
+    toggleAiStatus,
   };
 }
