@@ -83,6 +83,13 @@ class APIClient {
     });
   }
 
+  async updateChannel(id: string, data: Partial<CreateChannelDto>): Promise<Channel> {
+    return this.request(`/v1/channels/${id}`, {
+      method: 'PATCH',
+      body: JSON.stringify(data),
+    });
+  }
+
   async deleteChannel(id: string): Promise<{ message: string }> {
     return this.request(`/v1/channels/${id}`, {
       method: 'DELETE',

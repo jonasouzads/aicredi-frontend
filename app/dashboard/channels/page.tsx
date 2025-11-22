@@ -4,13 +4,16 @@ import { PageHeader } from '@/components/shared/page-header';
 import { EmptyState } from '@/components/shared/empty-state';
 import { ChannelCard } from '@/components/channels/channel-card';
 import { CreateChannelModal } from '@/components/channels/create-channel-modal';
+import { EditChannelModal } from '@/components/channels/edit-channel-modal';
 import { useChannels } from '@/hooks/use-channels';
 import { Button } from '@/components/ui/button';
+import { Channel } from '@/lib/api';
 import { useState } from 'react';
 
 export default function ChannelsPage() {
   const { channels, loading, error, deleteChannel } = useChannels();
   const [showCreateModal, setShowCreateModal] = useState(false);
+  const [editingChannel, setEditingChannel] = useState<Channel | null>(null);
 
   if (loading) {
     return (
@@ -90,6 +93,7 @@ export default function ChannelsPage() {
             <ChannelCard 
               key={channel.id} 
               channel={channel}
+              onEdit={(channel) => setEditingChannel(channel)}
               onManageAgents={() => {/* TODO: Implementar gestão de agents */}}
               onDelete={deleteChannel}
             />
@@ -99,6 +103,13 @@ export default function ChannelsPage() {
 
       {showCreateModal && (
         <CreateChannelModal onClose={() => setShowCreateModal(false)} />
+      )}
+
+      {editingChannel && (
+        <EditChannelModal 
+          channel={editingChannel} 
+          onClose={() => setEditingChannel(null)} 
+        />
       )}
     </div>
   );

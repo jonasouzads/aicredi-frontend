@@ -34,6 +34,15 @@ export function useChannels() {
     }
   };
 
+  const updateChannel = async (id: string, data: Partial<CreateChannelDto>) => {
+    try {
+      await apiClient.updateChannel(id, data);
+      await fetchChannels(); // Recarregar lista
+    } catch (err: any) {
+      throw new Error(err.message || 'Erro ao atualizar canal');
+    }
+  };
+
   const deleteChannel = async (id: string) => {
     try {
       await apiClient.deleteChannel(id);
@@ -72,6 +81,7 @@ export function useChannels() {
     loading,
     error,
     createChannel,
+    updateChannel,
     deleteChannel,
     getChannelAgents,
     addAgentsToChannel,

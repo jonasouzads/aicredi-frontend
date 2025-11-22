@@ -8,11 +8,12 @@ import { useState } from 'react';
 
 interface ChannelCardProps {
   channel: Channel;
+  onEdit?: (channel: Channel) => void;
   onManageAgents?: (channel: Channel) => void;
   onDelete?: (id: string) => void;
 }
 
-export function ChannelCard({ channel, onManageAgents, onDelete }: ChannelCardProps) {
+export function ChannelCard({ channel, onEdit, onManageAgents, onDelete }: ChannelCardProps) {
   const [isDeleting, setIsDeleting] = useState(false);
   const { confirm } = useConfirm();
   const toast = useToast();
@@ -82,27 +83,42 @@ export function ChannelCard({ channel, onManageAgents, onDelete }: ChannelCardPr
         <p className="text-sm text-text-secondary">
           <span className="font-medium">Tipo:</span> {channel.type}
         </p>
+        {channel.config?.whatsapp_phone_number && (
+          <p className="text-sm text-text-secondary truncate">
+            <span className="font-medium">WhatsApp:</span> {channel.config.whatsapp_phone_number}
+          </p>
+        )}
         {channel.config?.phone_number_id && (
           <p className="text-sm text-text-secondary truncate">
-            <span className="font-medium">ID:</span> {channel.config.phone_number_id}
+            <span className="font-medium">Phone ID:</span> {channel.config.phone_number_id}
           </p>
         )}
       </div>
 
       {/* Actions */}
-      <div className="flex flex-col sm:flex-row gap-2 mt-6">
-        <Button
-          onClick={() => onManageAgents?.(channel)}
-          variant="outline"
-          className="flex-1 rounded-xl"
-        >
-          <i className="fi fi-rr-users-alt text-base mr-2"></i>
-          <span className="hidden sm:inline">Gerenciar</span> Agents
-        </Button>
+      <div className="flex flex-col gap-2 mt-6">
+        <div className="flex gap-2">
+          <Button
+            onClick={() => onEdit?.(channel)}
+            variant="outline"
+            className="flex-1 rounded-xl"
+          >
+            <i className="fi fi-rr-edit text-base mr-2"></i>
+            Editar
+          </Button>
+          <Button
+            onClick={() => onManageAgents?.(channel)}
+            variant="outline"
+            className="flex-1 rounded-xl"
+          >
+            <i className="fi fi-rr-users-alt text-base mr-2"></i>
+            Agents
+          </Button>
+        </div>
         <Button
           onClick={handleDelete}
           variant="outline"
-          className="flex-1 rounded-xl text-red-600 hover:bg-red-50 hover:border-red-200"
+          className="w-full rounded-xl text-red-600 hover:bg-red-50 hover:border-red-200"
           disabled={isDeleting}
         >
           <i className="fi fi-rr-trash text-base mr-2"></i>

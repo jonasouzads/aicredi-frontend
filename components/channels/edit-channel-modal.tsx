@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { Channel } from '@/lib/api';
 import { useChannels } from '@/hooks/use-channels';
 import { useAgents } from '@/hooks/use-agents';
 import { useToast } from '@/components/ui/toast';
@@ -16,35 +17,33 @@ import {
 } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 
-interface CreateChannelModalProps {
+interface EditChannelModalProps {
+  channel: Channel;
   onClose: () => void;
 }
 
-export function CreateChannelModal({ onClose }: CreateChannelModalProps) {
-  const { createChannel } = useChannels();
+export function EditChannelModal({ channel, onClose }: EditChannelModalProps) {
+  const { updateChannel } = useChannels();
   const { agents } = useAgents();
   const toast = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
-    type: 'wizebot',
-    identifier: '',
-    whatsapp_phone_number: '',
-    phone_number_id: '',
-    api_token: '',
+    identifier: channel.identifier || '',
+    whatsapp_phone_number: channel.config?.whatsapp_phone_number || '',
+    phone_number_id: channel.config?.phone_number_id || '',
+    api_token: channel.config?.api_token || '',
     default_agent_id: '',
-    is_active: true,
+    is_active: channel.status === 'active',
   });
 
-  const webhookUrl = `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api'}/v1/webhooks/wizebot`;
+  const webhookUrl = `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api'}/webhooks/wizebot`;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     try {
       setIsSubmitting(true);
-      await createChannel({
-        type: 'wizebot',
-        provider: 'wizebot',
+      await updateChannel(channel.id, {
         identifier: formData.identifier,
         config: {
           whatsapp_phone_number: formData.whatsapp_phone_number,
@@ -53,10 +52,10 @@ export function CreateChannelModal({ onClose }: CreateChannelModalProps) {
         },
         default_agent_id: formData.default_agent_id || undefined,
       });
-      toast.success('Canal criado!', `O canal "${formData.identifier}" foi criado com sucesso.`);
+      toast.success('Canal atualizado!', `O canal "${formData.identifier}" foi atualizado com sucesso.`);
       onClose();
     } catch (error: any) {
-      toast.error('Erro ao criar canal', error.message || 'Não foi possível criar o canal.');
+      toast.error('Erro ao atualizar canal', error.message || 'Não foi possível atualizar o canal.');
     } finally {
       setIsSubmitting(false);
     }
@@ -69,9 +68,9 @@ export function CreateChannelModal({ onClose }: CreateChannelModalProps) {
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-brand-50 rounded-xl flex items-center justify-center">
-              <i className="fi fi-rr-comment-alt text-xl text-brand"></i>
+              <i className="fi fi-rr-edit text-xl text-brand"></i>
             </div>
-            <h2 className="text-title text-text-primary">Criar Novo Canal</h2>
+            <h2 className="text-title text-text-primary">Editar Canal</h2>
           </div>
           <button
             onClick={onClose}
@@ -88,9 +87,9 @@ export function CreateChannelModal({ onClose }: CreateChannelModalProps) {
             <div className="flex items-start gap-3">
               <i className="fi fi-rr-info text-brand text-xl mt-0.5"></i>
               <div>
-                <h3 className="text-body font-semibold text-brand mb-1">Canal Wizebot</h3>
+                <h3 className="text-body font-semibold text-brand mb-1">Editar Canal Wizebot</h3>
                 <p className="text-sm text-brand-700">
-                  Configure um canal para receber mensagens da plataforma Wizebot.
+                  Atualize as configurações do canal Wizebot.
                 </p>
               </div>
             </div>
@@ -246,7 +245,7 @@ export function CreateChannelModal({ onClose }: CreateChannelModalProps) {
               disabled={isSubmitting}
               className="btn-primary flex-1 order-2 sm:order-1"
             >
-              {isSubmitting ? 'Criando...' : 'Criar Canal'}
+              {isSubmitting ? 'Salvando...' : 'Salvar Alterações'}
             </Button>
             <Button
               type="button"
