@@ -91,7 +91,7 @@ export function Sidebar() {
                 className={`
                   flex items-center gap-3 px-5 py-3 rounded-xl transition-all
                   ${isActive
-                    ? 'bg-brand text-white font-medium'
+                    ? 'bg-brand-50 text-brand font-medium'
                     : 'text-text-secondary hover:bg-background hover:text-text-primary'
                   }
                 `}
@@ -103,8 +103,22 @@ export function Sidebar() {
           })}
         </nav>
 
-        {/* Logout */}
-        <div className="p-6">
+        {/* Settings & Logout */}
+        <div className="p-6 space-y-2">
+          <Link
+            href="/dashboard/settings"
+            className={`
+              flex items-center gap-3 px-5 py-3 rounded-xl transition-all
+              ${pathname.startsWith('/dashboard/settings')
+                ? 'bg-brand-50 text-brand font-medium'
+                : 'text-text-secondary hover:bg-background hover:text-text-primary'
+              }
+            `}
+          >
+            <i className="fi fi-rr-settings text-xl leading-none flex items-center"></i>
+            <span className="text-[15px] leading-none">Configurações</span>
+          </Link>
+          
           <button
             onClick={handleLogout}
             className="flex items-center gap-3 px-5 py-3 rounded-xl w-full text-text-secondary hover:bg-background hover:text-text-primary transition-all"

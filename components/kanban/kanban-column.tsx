@@ -76,9 +76,9 @@ export function KanbanColumn({
   };
 
   return (
-    <div className={`flex-1 min-w-[300px] max-w-[300px] rounded-xl ${getColumnBg(status)} p-3`}>
+    <div className={`flex flex-col flex-shrink-0 w-[320px] rounded-xl ${getColumnBg(status)} p-3 h-full`}>
       {/* Column Header */}
-      <div className="mb-3">
+      <div className="flex-shrink-0 mb-3">
         <div className="flex items-center justify-between px-2">
           <h2 className="text-sm font-semibold text-text-primary">{title}</h2>
           <span className="text-xs text-text-secondary bg-white px-2 py-1 rounded font-medium">
@@ -94,8 +94,7 @@ export function KanbanColumn({
         onDrop={handleDrop}
         onScroll={handleScroll}
         className={`
-          min-h-[calc(100vh-280px)] max-h-[calc(100vh-280px)] 
-          overflow-y-auto rounded-lg transition-all
+          flex-1 overflow-y-auto rounded-lg transition-all kanban-scroll
           ${isDragOver ? 'bg-brand-100 border-2 border-dashed border-brand' : ''}
         `}
       >

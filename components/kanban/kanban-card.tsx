@@ -63,10 +63,9 @@ export function KanbanCard({ contact, onViewDetails, onToggleAi, aiPaused = fals
       onClick={() => onViewDetails(contact)}
       className={`
         bg-white rounded-lg p-3 mb-2 cursor-pointer
-        hover:bg-brand-50
+        hover:bg-gray-50
         transition-all duration-300 ease-in-out
         ${isDragging ? 'opacity-50 rotate-2' : ''}
-        ${localAiPaused ? 'border-l-4 border-orange-400' : 'border-l-4 border-transparent'}
         ${isTogglingAi ? 'opacity-75' : ''}
       `}
     >

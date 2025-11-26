@@ -6,6 +6,7 @@ import { useToast } from '@/components/ui/toast';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
 import { Agent } from '@/lib/api';
 import {
   Select,
@@ -96,12 +97,12 @@ export function EditAgentModal({ agent, onClose }: EditAgentModalProps) {
             <Label htmlFor="instructions" className="text-text-primary mb-2 block">
               Instruções *
             </Label>
-            <textarea
+            <Textarea
               id="instructions"
               value={formData.instructions}
               onChange={(e) => setFormData({ ...formData, instructions: e.target.value })}
               placeholder="Você é um especialista em..."
-              className="input w-full min-h-[120px] resize-y"
+              className="min-h-[120px] resize-y"
               required
               minLength={10}
             />

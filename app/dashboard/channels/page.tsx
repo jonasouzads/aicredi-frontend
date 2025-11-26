@@ -2,6 +2,8 @@
 
 import { PageHeader } from '@/components/shared/page-header';
 import { EmptyState } from '@/components/shared/empty-state';
+import { PageSkeleton } from '@/components/shared/page-skeleton';
+import { ErrorState } from '@/components/shared/error-state';
 import { ChannelCard } from '@/components/channels/channel-card';
 import { CreateChannelModal } from '@/components/channels/create-channel-modal';
 import { EditChannelModal } from '@/components/channels/edit-channel-modal';
@@ -16,44 +18,11 @@ export default function ChannelsPage() {
   const [editingChannel, setEditingChannel] = useState<Channel | null>(null);
 
   if (loading) {
-    return (
-      <div>
-        <div className="flex items-center justify-between mb-8">
-          <div>
-            <div className="animate-pulse bg-background rounded h-8 w-48 mb-2"></div>
-            <div className="animate-pulse bg-background rounded h-4 w-96"></div>
-          </div>
-          <div className="animate-pulse bg-background rounded-xl h-11 w-32"></div>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {[1, 2, 3].map((i) => (
-            <div key={i} className="card">
-              <div className="flex items-start gap-4">
-                <div className="animate-pulse bg-background rounded-xl w-12 h-12"></div>
-                <div className="flex-1">
-                  <div className="animate-pulse bg-background rounded h-6 w-3/4 mb-3"></div>
-                  <div className="animate-pulse bg-background rounded h-4 w-full mb-2"></div>
-                  <div className="animate-pulse bg-background rounded h-4 w-2/3"></div>
-                </div>
-              </div>
-              <div className="flex gap-2 mt-6">
-                <div className="animate-pulse bg-background rounded-xl h-10 flex-1"></div>
-                <div className="animate-pulse bg-background rounded-xl h-10 flex-1"></div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-    );
+    return <PageSkeleton hasHeader hasAction gridCols={3} cardCount={6} />;
   }
 
   if (error) {
-    return (
-      <div className="card text-center py-16">
-        <p className="text-red-500">Erro ao carregar canais: {error}</p>
-      </div>
-    );
+    return <ErrorState message={error} />;
   }
 
   return (
@@ -88,7 +57,7 @@ export default function ChannelsPage() {
           }
         />
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {channels.map((channel) => (
             <ChannelCard 
               key={channel.id} 

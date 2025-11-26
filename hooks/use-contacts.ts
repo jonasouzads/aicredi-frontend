@@ -113,6 +113,14 @@ export function useContacts() {
     }
   };
 
+  const getSimulations = async (contactId: string) => {
+    try {
+      return await api.getContactSimulations(contactId);
+    } catch (err: any) {
+      throw new Error(err.message || 'Erro ao buscar simulações');
+    }
+  };
+
   const createContact = async (contactData: Partial<Contact>) => {
     try {
       const newContact = await api.createContact(contactData);
@@ -209,6 +217,7 @@ export function useContacts() {
     loadMore,
     getContact,
     getConversations,
+    getSimulations,
     createContact,
     updateContact,
     updateStatus,

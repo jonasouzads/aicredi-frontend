@@ -3,9 +3,12 @@
 import { useEffect, useState, useCallback } from 'react';
 import { useContacts, Contact } from '@/hooks/use-contacts';
 import { useToast } from '@/components/ui/toast';
+import { PageHeader } from '@/components/shared/page-header';
+import { SearchInput } from '@/components/shared/search-input';
 import { KanbanColumn } from '@/components/kanban/kanban-column';
 import { KanbanSkeleton } from '@/components/kanban/kanban-skeleton';
-import { ContactDetailsModal } from '@/components/kanban/contact-details-modal';
+import { ContactDetailsCard } from '@/components/kanban/contact-details-card';
+import { ChatModal } from '@/components/chat/chat-modal';
 import { useDebounce } from '@/hooks/use-debounce';
 
 export default function KanbanPage() {
@@ -22,6 +25,7 @@ export default function KanbanPage() {
   } = useContacts();
   const toast = useToast();
   const [selectedContact, setSelectedContact] = useState<Contact | null>(null);
+  const [showChat, setShowChat] = useState(false);
   const [localKanbanData, setLocalKanbanData] = useState(kanbanData);
   const [localKanbanCounts, setLocalKanbanCounts] = useState(kanbanCounts);
   const [searchTerm, setSearchTerm] = useState('');
@@ -125,6 +129,11 @@ export default function KanbanPage() {
 
   const handleCloseDetails = () => {
     setSelectedContact(null);
+    setShowChat(false);
+  };
+
+  const handleOpenChat = () => {
+    setShowChat(true);
   };
 
   const handleToggleAi = useCallback(async (phone: string, currentlyActive: boolean) => {
@@ -167,41 +176,26 @@ export default function KanbanPage() {
   }
 
   return (
-    <div className="h-full flex flex-col">
+    <div className="h-full flex flex-col overflow-hidden">
       {/* Header */}
-      <div className="mb-6">
-        <div className="flex items-center justify-between mb-4">
-          <div>
-            <h1 className="text-display text-text-primary mb-2">Kanban de Leads</h1>
-            <p className="text-body text-text-secondary">
-              Gerencie seus contatos por estágio do funil
-            </p>
-          </div>
-        </div>
-        
-        {/* Barra de Busca */}
-        <div className="relative">
-          <i className="fi fi-rr-search absolute left-3 top-1/2 -translate-y-1/2 text-text-secondary"></i>
-          <input
-            type="text"
-            placeholder="Buscar por nome ou telefone..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-brand focus:border-transparent"
-          />
-          {searchTerm && (
-            <button
-              onClick={() => setSearchTerm('')}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-text-secondary hover:text-text-primary"
-            >
-              <i className="fi fi-rr-cross-small"></i>
-            </button>
-          )}
-        </div>
+      <div className="flex-shrink-0">
+        <PageHeader
+          title="Kanban de Leads"
+          description="Gerencie seus contatos por estágio do funil"
+        />
+      </div>
+      
+      {/* Barra de Busca */}
+      <div className="flex-shrink-0 mb-4">
+        <SearchInput
+          value={searchTerm}
+          onChange={setSearchTerm}
+          placeholder="Buscar por nome ou telefone..."
+        />
       </div>
 
       {/* Kanban Board */}
-      <div className="flex gap-4 overflow-x-auto flex-1 pb-6">
+      <div className="flex gap-4 overflow-x-auto flex-1 min-h-0">
         {displayData && (
           <>
             <KanbanColumn
@@ -247,9 +241,18 @@ export default function KanbanPage() {
         )}
       </div>
 
-      {/* Contact Details Modal */}
-      {selectedContact && (
-        <ContactDetailsModal
+      {/* Contact Details Card */}
+      {selectedContact && !showChat && (
+        <ContactDetailsCard
+          contact={selectedContact}
+          onClose={handleCloseDetails}
+          onOpenChat={handleOpenChat}
+        />
+      )}
+
+      {/* Chat Modal */}
+      {selectedContact && showChat && (
+        <ChatModal
           contact={selectedContact}
           onClose={handleCloseDetails}
         />

@@ -154,7 +154,11 @@ class APIClient {
     return this.request(`/v1/contacts/${contactId}/conversations`);
   }
 
-  async createContact(data: CreateContactDto): Promise<Contact> {
+  async getContactSimulations(contactId: string): Promise<Simulation[]> {
+    return this.request(`/v1/contacts/${contactId}/simulations`);
+  }
+
+  async createContact(data: Partial<Contact>): Promise<Contact> {
     return this.request('/v1/contacts', {
       method: 'POST',
       body: JSON.stringify(data),
@@ -200,6 +204,22 @@ class APIClient {
 
   async getDashboardStats() {
     return this.request<DashboardStats>(`/v1/dashboard/stats`);
+  }
+
+  // ==================== SETTINGS ====================
+  async getSettings() {
+    return this.request<TenantSettings>('/v1/settings');
+  }
+
+  async getDefaultMessages() {
+    return this.request<DefaultMessages>('/v1/settings/default-messages');
+  }
+
+  async updateDefaultMessages(messages: DefaultMessages) {
+    return this.request<DefaultMessages>('/v1/settings/default-messages', {
+      method: 'PATCH',
+      body: JSON.stringify(messages),
+    });
   }
 }
 
@@ -350,6 +370,57 @@ export interface CreateContactDto {
   email?: string;
   tags?: string[];
   fields?: Record<string, any>;
+}
+
+export interface Simulation {
+  id: string;
+  tenant_id: string;
+  contact_id: string;
+  agent_id?: string;
+  tool_used: string;
+  provider: string;
+  status: string;
+  input: {
+    cpf: string;
+    cep: string;
+    nome: string;
+    dataNascimento: string;
+    telefone: string;
+  };
+  output: {
+    success: boolean;
+    propostaId?: number;
+    aprovado?: boolean;
+    message?: string;
+    situacaoDescricao?: string;
+    motivos?: string[];
+    valorAprovado?: number;
+    parcelas?: number;
+  };
+  webhook_data?: {
+    propostaId: number;
+    situacaoDescricao: string;
+    motivos?: string[];
+    valorAprovado?: number;
+    parcelas?: number;
+    receivedAt: string;
+  };
+  error?: string;
+  created_at: string;
+}
+
+export interface TenantSettings {
+  id: string;
+  name: string;
+  slug: string;
+  plan: string;
+  metadata: Record<string, any>;
+  default_messages: DefaultMessages;
+}
+
+export interface DefaultMessages {
+  approved: string;
+  rejected: string;
 }
 
 export const apiClient = new APIClient();

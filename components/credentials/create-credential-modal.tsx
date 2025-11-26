@@ -186,18 +186,21 @@ export function CreateCredentialModal({ onClose }: CreateCredentialModalProps) {
                 <Label htmlFor="environment" className="text-text-primary mb-2 block">
                   Ambiente *
                 </Label>
-                <select
-                  id="environment"
+                <Select
                   value={formData.config.environment}
-                  onChange={(e) => setFormData({
+                  onValueChange={(value) => setFormData({
                     ...formData,
-                    config: { ...formData.config, environment: e.target.value }
+                    config: { ...formData.config, environment: value }
                   })}
-                  className="input w-full"
                 >
-                  <option value="staging">🧪 Homologação (Staging)</option>
-                  <option value="production">🚀 Produção</option>
-                </select>
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Selecione o ambiente" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="staging">🧪 Homologação (Staging)</SelectItem>
+                    <SelectItem value="production">🚀 Produção</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
             </>
           )}

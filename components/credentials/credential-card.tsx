@@ -4,6 +4,8 @@ import { Credential } from '@/lib/api';
 import { Button } from '@/components/ui/button';
 import { useConfirm } from '@/components/ui/confirm-dialog';
 import { useToast } from '@/components/ui/toast';
+import { IconContainer } from '@/components/shared/icon-container';
+import { getCredentialIcon } from '@/lib/icons';
 import { useState } from 'react';
 
 interface CredentialCardProps {
@@ -40,21 +42,6 @@ export function CredentialCard({ credential, onDelete }: CredentialCardProps) {
     }
   };
 
-  const getCredentialIcon = () => {
-    switch (credential.type) {
-      case 'crefaz':
-        return '💳';
-      case 'wizebot':
-        return '🤖';
-      case 'mercadopago':
-        return '💰';
-      case 'fgts_api':
-        return '🏦';
-      default:
-        return '🔑';
-    }
-  };
-
   const getCredentialLabel = () => {
     switch (credential.type) {
       case 'crefaz':
@@ -76,9 +63,7 @@ export function CredentialCard({ credential, onDelete }: CredentialCardProps) {
     <div className="card hover:shadow-lg transition-all group">
       {/* Header */}
       <div className="flex items-start justify-between mb-6">
-        <div className="w-14 h-14 bg-brand-50 rounded-xl flex items-center justify-center text-2xl">
-          {getCredentialIcon()}
-        </div>
+        <IconContainer icon={getCredentialIcon(credential.type)} variant="brand" size="md" />
         <span className="badge badge-success">
           <i className="fi fi-rr-check-circle text-xs mr-1"></i>
           Ativa
@@ -103,7 +88,7 @@ export function CredentialCard({ credential, onDelete }: CredentialCardProps) {
       <Button
         onClick={handleDelete}
         variant="outline"
-        className="w-full rounded-xl text-red-600 hover:bg-red-50 hover:border-red-200"
+        className="w-full rounded-pill text-red-600 hover:bg-red-50 hover:border-red-200"
         disabled={isDeleting}
       >
         <i className="fi fi-rr-trash text-base mr-2"></i>

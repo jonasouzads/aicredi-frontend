@@ -4,6 +4,9 @@ import { Agent } from '@/lib/api';
 import { Button } from '@/components/ui/button';
 import { useConfirm } from '@/components/ui/confirm-dialog';
 import { useToast } from '@/components/ui/toast';
+import { IconContainer } from '@/components/shared/icon-container';
+import { StatusBadge } from '@/components/shared/status-badge';
+import { getAgentIcon } from '@/lib/icons';
 import { useState } from 'react';
 
 interface AgentCardProps {
@@ -45,12 +48,8 @@ export function AgentCard({ agent, onEdit, onDelete }: AgentCardProps) {
     <div className="card hover:shadow-lg transition-all group">
       {/* Header */}
       <div className="flex items-start justify-between mb-6">
-        <div className="w-14 h-14 bg-brand-50 rounded-xl flex items-center justify-center">
-          <i className="fi fi-rr-robot text-3xl text-brand"></i>
-        </div>
-        <span className={`badge ${agent.status === 'active' ? 'badge-success' : 'badge-error'}`}>
-          {agent.status === 'active' ? 'Ativo' : 'Inativo'}
-        </span>
+        <IconContainer icon={getAgentIcon()} variant="brand" size="md" />
+        <StatusBadge status={agent.status} showIcon />
       </div>
 
       {/* Content */}
@@ -83,7 +82,7 @@ export function AgentCard({ agent, onEdit, onDelete }: AgentCardProps) {
         <Button
           onClick={() => onEdit?.(agent)}
           variant="outline"
-          className="flex-1 rounded-xl"
+          className="flex-1 rounded-pill"
         >
           <i className="fi fi-rr-edit text-base mr-2"></i>
           Editar
@@ -91,7 +90,7 @@ export function AgentCard({ agent, onEdit, onDelete }: AgentCardProps) {
         <Button
           onClick={handleDelete}
           variant="outline"
-          className="flex-1 rounded-xl text-red-600 hover:bg-red-50"
+          className="flex-1 rounded-pill text-red-600 hover:bg-red-50 hover:border-red-200"
           disabled={isDeleting}
         >
           <i className="fi fi-rr-trash text-base mr-2"></i>
