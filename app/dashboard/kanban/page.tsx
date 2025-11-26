@@ -163,9 +163,11 @@ export default function KanbanPage() {
       );
 
     return {
-      lead: filterContacts(localKanbanData.lead),
-      in_progress: filterContacts(localKanbanData.in_progress),
-      completed: filterContacts(localKanbanData.completed),
+      new: filterContacts(localKanbanData.new),
+      analysis: filterContacts(localKanbanData.analysis),
+      rejected: filterContacts(localKanbanData.rejected),
+      approved: filterContacts(localKanbanData.approved),
+      closed: filterContacts(localKanbanData.closed),
     };
   }, [localKanbanData, debouncedSearch]);
 
@@ -201,9 +203,9 @@ export default function KanbanPage() {
             <KanbanColumn
               title="Novos Leads"
               icon="fi-rr-user-add"
-              status="lead"
-              contacts={displayData.lead}
-              totalCount={localKanbanCounts?.lead || 0}
+              status="new"
+              contacts={displayData.new}
+              totalCount={localKanbanCounts?.new || 0}
               onStatusChange={handleStatusChange}
               onViewDetails={handleViewDetails}
               onLoadMore={loadMore}
@@ -212,11 +214,11 @@ export default function KanbanPage() {
               onToggleAi={handleToggleAi}
             />
             <KanbanColumn
-              title="Em Atendimento"
-              icon="fi-rr-time-forward"
-              status="in_progress"
-              contacts={displayData.in_progress}
-              totalCount={localKanbanCounts?.in_progress || 0}
+              title="Em Análise"
+              icon="fi-rr-hourglass"
+              status="analysis"
+              contacts={displayData.analysis}
+              totalCount={localKanbanCounts?.analysis || 0}
               onStatusChange={handleStatusChange}
               onViewDetails={handleViewDetails}
               onLoadMore={loadMore}
@@ -225,11 +227,37 @@ export default function KanbanPage() {
               onToggleAi={handleToggleAi}
             />
             <KanbanColumn
-              title="Concluídos"
+              title="Negada"
+              icon="fi-rr-cross-circle"
+              status="rejected"
+              contacts={displayData.rejected}
+              totalCount={localKanbanCounts?.rejected || 0}
+              onStatusChange={handleStatusChange}
+              onViewDetails={handleViewDetails}
+              onLoadMore={loadMore}
+              isLoadingMore={isLoadingMore}
+              hasMore={hasMore}
+              onToggleAi={handleToggleAi}
+            />
+            <KanbanColumn
+              title="Aprovada"
               icon="fi-rr-check-circle"
-              status="completed"
-              contacts={displayData.completed}
-              totalCount={localKanbanCounts?.completed || 0}
+              status="approved"
+              contacts={displayData.approved}
+              totalCount={localKanbanCounts?.approved || 0}
+              onStatusChange={handleStatusChange}
+              onViewDetails={handleViewDetails}
+              onLoadMore={loadMore}
+              isLoadingMore={isLoadingMore}
+              hasMore={hasMore}
+              onToggleAi={handleToggleAi}
+            />
+            <KanbanColumn
+              title="Concluído"
+              icon="fi-rr-flag"
+              status="closed"
+              contacts={displayData.closed}
+              totalCount={localKanbanCounts?.closed || 0}
               onStatusChange={handleStatusChange}
               onViewDetails={handleViewDetails}
               onLoadMore={loadMore}

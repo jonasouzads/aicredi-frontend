@@ -64,22 +64,32 @@ export function useContacts() {
           
           // Função para remover duplicatas por ID
           const mergeUnique = (existing: any[], newItems: any[]) => {
+            if (!existing || !Array.isArray(existing)) return newItems || [];
+            if (!newItems || !Array.isArray(newItems)) return existing;
             const existingIds = new Set(existing.map(item => item.id));
             const uniqueNew = newItems.filter(item => !existingIds.has(item.id));
             return [...existing, ...uniqueNew];
           };
           
           return {
-            lead: mergeUnique(prev.lead, data.lead),
-            in_progress: mergeUnique(prev.in_progress, data.in_progress),
-            completed: mergeUnique(prev.completed, data.completed),
+            new: mergeUnique(prev.new, data.new),
+            analysis: mergeUnique(prev.analysis, data.analysis),
+            rejected: mergeUnique(prev.rejected, data.rejected),
+            approved: mergeUnique(prev.approved, data.approved),
+            closed: mergeUnique(prev.closed, data.closed),
           };
         });
         setKanbanPage(page);
       }
       
       // Verificar se tem mais dados
-      const totalLoaded = (data.lead.length + data.in_progress.length + data.completed.length);
+      const totalLoaded = (
+        (data.new?.length || 0) + 
+        (data.analysis?.length || 0) + 
+        (data.rejected?.length || 0) + 
+        (data.approved?.length || 0) + 
+        (data.closed?.length || 0)
+      );
       if (totalLoaded < 50) {
         setHasMore(false);
       }

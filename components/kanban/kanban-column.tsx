@@ -54,12 +54,16 @@ export function KanbanColumn({
 
   const getColumnBg = (status: string) => {
     switch (status) {
-      case 'lead':
-        return 'bg-gradient-to-b from-brand-50 to-background';
-      case 'in_progress':
-        return 'bg-gradient-to-b from-accent-50 to-background';
-      case 'completed':
+      case 'new':
+        return 'bg-gradient-to-b from-blue-50 to-background';
+      case 'analysis':
+        return 'bg-gradient-to-b from-yellow-50 to-background';
+      case 'rejected':
+        return 'bg-gradient-to-b from-red-50 to-background';
+      case 'approved':
         return 'bg-gradient-to-b from-green-50 to-background';
+      case 'closed':
+        return 'bg-gradient-to-b from-gray-50 to-background';
       default:
         return 'bg-background';
     }

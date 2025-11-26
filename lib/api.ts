@@ -351,15 +351,19 @@ export interface Message {
 }
 
 export interface KanbanData {
-  lead: Contact[];
-  in_progress: Contact[];
-  completed: Contact[];
+  new: Contact[];
+  analysis: Contact[];
+  rejected: Contact[];
+  approved: Contact[];
+  closed: Contact[];
 }
 
 export interface KanbanCounts {
-  lead: number;
-  in_progress: number;
-  completed: number;
+  new: number;
+  analysis: number;
+  rejected: number;
+  approved: number;
+  closed: number;
 }
 
 export interface CreateContactDto {
