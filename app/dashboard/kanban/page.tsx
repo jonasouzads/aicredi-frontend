@@ -2,6 +2,8 @@
 
 import { useEffect, useState, useCallback } from 'react';
 import { useContacts, Contact } from '@/hooks/use-contacts';
+import { useChannels } from '@/hooks/use-channels';
+import { useAgents } from '@/hooks/use-agents';
 import { useToast } from '@/components/ui/toast';
 import { PageHeader } from '@/components/shared/page-header';
 import { SearchInput } from '@/components/shared/search-input';
@@ -10,6 +12,13 @@ import { KanbanSkeleton } from '@/components/kanban/kanban-skeleton';
 import { ContactDetailsCard } from '@/components/kanban/contact-details-card';
 import { ChatModal } from '@/components/chat/chat-modal';
 import { useDebounce } from '@/hooks/use-debounce';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 
 export default function KanbanPage() {
   const { 
@@ -23,12 +32,16 @@ export default function KanbanPage() {
     updateStatus,
     toggleAiStatus 
   } = useContacts();
+  const { channels } = useChannels();
+  const { agents } = useAgents();
   const toast = useToast();
   const [selectedContact, setSelectedContact] = useState<Contact | null>(null);
   const [showChat, setShowChat] = useState(false);
   const [localKanbanData, setLocalKanbanData] = useState(kanbanData);
   const [localKanbanCounts, setLocalKanbanCounts] = useState(kanbanCounts);
   const [searchTerm, setSearchTerm] = useState('');
+  const [selectedChannelId, setSelectedChannelId] = useState<string>('');
+  const [selectedAgentId, setSelectedAgentId] = useState<string>('');
   const debouncedSearch = useDebounce(searchTerm, 300);
 
   useEffect(() => {
@@ -151,16 +164,38 @@ export default function KanbanPage() {
     }
   }, [toggleAiStatus, toast, fetchKanban]);
 
-  // Filtrar dados localmente quando houver busca
+  // Verificar se há filtros ativos (excluindo "all")
+  const hasActiveChannelFilter = selectedChannelId && selectedChannelId !== 'all';
+  const hasActiveAgentFilter = selectedAgentId && selectedAgentId !== 'all';
+
+  // Filtrar dados localmente quando houver busca, canal ou agent selecionado
   const filteredKanbanData = useCallback(() => {
-    if (!localKanbanData || !debouncedSearch) return localKanbanData;
+    if (!localKanbanData) return localKanbanData;
+    
+    // Se não há filtros, retornar dados originais
+    if (!debouncedSearch && !hasActiveChannelFilter && !hasActiveAgentFilter) {
+      return localKanbanData;
+    }
 
     const searchLower = debouncedSearch.toLowerCase();
+    
     const filterContacts = (contacts: Contact[]) => 
-      contacts.filter(contact => 
-        contact.name?.toLowerCase().includes(searchLower) ||
-        contact.phone?.toLowerCase().includes(searchLower)
-      );
+      contacts.filter(contact => {
+        // Filtro por busca (nome ou telefone)
+        const matchesSearch = !debouncedSearch || 
+          contact.name?.toLowerCase().includes(searchLower) ||
+          contact.phone?.toLowerCase().includes(searchLower);
+        
+        // Filtro por canal
+        const matchesChannel = !hasActiveChannelFilter || 
+          contact.channel_id === selectedChannelId;
+        
+        // Filtro por agent (verifica current_agent_id nas conversas do contato)
+        const matchesAgent = !hasActiveAgentFilter || 
+          contact.conversations?.some((conv: any) => conv.current_agent_id === selectedAgentId);
+        
+        return matchesSearch && matchesChannel && matchesAgent;
+      });
 
     return {
       new: filterContacts(localKanbanData.new),
@@ -169,7 +204,7 @@ export default function KanbanPage() {
       approved: filterContacts(localKanbanData.approved),
       closed: filterContacts(localKanbanData.closed),
     };
-  }, [localKanbanData, debouncedSearch]);
+  }, [localKanbanData, debouncedSearch, hasActiveChannelFilter, hasActiveAgentFilter, selectedChannelId, selectedAgentId]);
 
   const displayData = filteredKanbanData();
 
@@ -187,13 +222,61 @@ export default function KanbanPage() {
         />
       </div>
       
-      {/* Barra de Busca */}
-      <div className="flex-shrink-0 mb-4">
-        <SearchInput
-          value={searchTerm}
-          onChange={setSearchTerm}
-          placeholder="Buscar por nome ou telefone..."
-        />
+      {/* Barra de Filtros */}
+      <div className="flex-shrink-0 mb-4 flex flex-wrap items-center gap-3">
+        {/* Filtros à esquerda */}
+        <Select value={selectedChannelId} onValueChange={setSelectedChannelId}>
+          <SelectTrigger className="w-[160px] h-[42px] bg-surface border border-border rounded-xl px-3">
+            <SelectValue placeholder="Canal" />
+          </SelectTrigger>
+          <SelectContent className="min-w-[200px]">
+            <SelectItem value="all">Todos os canais</SelectItem>
+            {channels.map((channel) => (
+              <SelectItem key={channel.id} value={channel.id}>
+                {channel.identifier || channel.name || channel.type}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        
+        <Select value={selectedAgentId} onValueChange={setSelectedAgentId}>
+          <SelectTrigger className="w-[160px] h-[42px] bg-surface border border-border rounded-xl px-3">
+            <SelectValue placeholder="Agent" />
+          </SelectTrigger>
+          <SelectContent className="min-w-[200px]">
+            <SelectItem value="all">Todos os agents</SelectItem>
+            {agents.map((agent) => (
+              <SelectItem key={agent.id} value={agent.id}>
+                {agent.name}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        
+        {/* Botão limpar filtros */}
+        {(searchTerm || hasActiveChannelFilter || hasActiveAgentFilter) && (
+          <button
+            onClick={() => {
+              setSearchTerm('');
+              setSelectedChannelId('');
+              setSelectedAgentId('');
+            }}
+            className="h-[42px] flex items-center gap-1.5 px-3 text-sm text-text-secondary hover:text-text-primary bg-surface border border-border rounded-xl hover:bg-surface-hover transition-colors"
+            title="Limpar filtros"
+          >
+            <i className="fi fi-rr-cross-small"></i>
+            Limpar
+          </button>
+        )}
+
+        {/* Busca por texto à direita */}
+        <div className="flex-1 min-w-[200px]">
+          <SearchInput
+            value={searchTerm}
+            onChange={setSearchTerm}
+            placeholder="Buscar por nome ou telefone..."
+          />
+        </div>
       </div>
 
       {/* Kanban Board */}
