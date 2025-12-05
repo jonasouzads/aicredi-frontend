@@ -221,6 +221,69 @@ class APIClient {
       body: JSON.stringify(messages),
     });
   }
+
+  // ==================== INTEGRATION WEBHOOKS ====================
+  async getWebhooks(): Promise<IntegrationWebhook[]> {
+    return this.request('/integration-webhooks');
+  }
+
+  async getWebhook(id: string): Promise<IntegrationWebhook> {
+    return this.request(`/integration-webhooks/${id}`);
+  }
+
+  async getWebhookEvents(): Promise<{ events: WebhookEventInfo[] }> {
+    return this.request('/integration-webhooks/events');
+  }
+
+  async createWebhook(data: CreateWebhookDto): Promise<IntegrationWebhook> {
+    return this.request('/integration-webhooks', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  }
+
+  async updateWebhook(id: string, data: UpdateWebhookDto): Promise<IntegrationWebhook> {
+    return this.request(`/integration-webhooks/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    });
+  }
+
+  async deleteWebhook(id: string): Promise<{ message: string }> {
+    return this.request(`/integration-webhooks/${id}`, {
+      method: 'DELETE',
+    });
+  }
+
+  async regenerateWebhookSecret(id: string): Promise<{ secret_key: string }> {
+    return this.request(`/integration-webhooks/${id}/regenerate-secret`, {
+      method: 'POST',
+    });
+  }
+
+  async testWebhook(id: string): Promise<WebhookTestResult> {
+    return this.request(`/integration-webhooks/${id}/test`, {
+      method: 'POST',
+    });
+  }
+
+  async getWebhookDeliveries(
+    webhookId: string,
+    params?: { limit?: number; offset?: number; status?: string }
+  ): Promise<{ deliveries: WebhookDelivery[]; total: number }> {
+    const query = new URLSearchParams();
+    if (params?.limit) query.set('limit', params.limit.toString());
+    if (params?.offset) query.set('offset', params.offset.toString());
+    if (params?.status) query.set('status', params.status);
+    const queryString = query.toString();
+    return this.request(`/integration-webhooks/${webhookId}/deliveries${queryString ? `?${queryString}` : ''}`);
+  }
+
+  async retryWebhookDelivery(deliveryId: string): Promise<WebhookDelivery> {
+    return this.request(`/integration-webhooks/deliveries/${deliveryId}/retry`, {
+      method: 'POST',
+    });
+  }
 }
 
 // ==================== TYPES ====================
@@ -425,6 +488,86 @@ export interface TenantSettings {
 export interface DefaultMessages {
   approved: string;
   rejected: string;
+}
+
+// ==================== WEBHOOK TYPES ====================
+export interface IntegrationWebhook {
+  id: string;
+  tenant_id: string;
+  name: string;
+  url: string;
+  secret_key: string;
+  events: string[];
+  providers: string[];
+  custom_headers: Record<string, string>;
+  max_retries: number;
+  retry_delay_seconds: number;
+  timeout_seconds: number;
+  status: 'active' | 'inactive' | 'suspended';
+  total_deliveries: number;
+  successful_deliveries: number;
+  failed_deliveries: number;
+  last_delivery_at?: string;
+  last_success_at?: string;
+  last_failure_at?: string;
+  consecutive_failures: number;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface CreateWebhookDto {
+  name: string;
+  url: string;
+  events?: string[];
+  providers?: string[];
+  custom_headers?: Record<string, string>;
+  max_retries?: number;
+  retry_delay_seconds?: number;
+  timeout_seconds?: number;
+}
+
+export interface UpdateWebhookDto {
+  name?: string;
+  url?: string;
+  events?: string[];
+  providers?: string[];
+  custom_headers?: Record<string, string>;
+  max_retries?: number;
+  retry_delay_seconds?: number;
+  timeout_seconds?: number;
+  status?: 'active' | 'inactive';
+}
+
+export interface WebhookEventInfo {
+  key: string;
+  value: string;
+  description: string;
+}
+
+export interface WebhookTestResult {
+  success: boolean;
+  status_code?: number;
+  response_time_ms?: number;
+  error?: string;
+}
+
+export interface WebhookDelivery {
+  id: string;
+  webhook_id: string;
+  tenant_id: string;
+  event_id: string;
+  event_type: string;
+  payload: any;
+  status: 'pending' | 'processing' | 'delivered' | 'failed' | 'retrying';
+  http_status?: number;
+  response_body?: string;
+  error_message?: string;
+  attempt_number: number;
+  max_attempts: number;
+  next_retry_at?: string;
+  duration_ms?: number;
+  created_at: string;
+  updated_at: string;
 }
 
 export const apiClient = new APIClient();

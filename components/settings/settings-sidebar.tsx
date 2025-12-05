@@ -11,7 +11,11 @@ const sections = [
     name: 'Mensagens Padrão',
     icon: 'fi-rr-comment-alt',
   },
-  // Adicionar mais seções no futuro
+  {
+    id: 'webhooks',
+    name: 'Webhooks',
+    icon: 'fi-rr-link-alt',
+  },
 ];
 
 export function SettingsSidebar({ activeSection, onSectionChange }: SettingsSidebarProps) {
