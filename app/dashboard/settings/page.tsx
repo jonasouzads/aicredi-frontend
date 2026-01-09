@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { SettingsSidebar } from '@/components/settings/settings-sidebar';
 import { DefaultMessagesSettings } from '@/components/settings/default-messages-settings';
+import { FollowUpSettings } from '@/components/settings/follow-up-settings';
 import { WebhooksSettings } from '@/components/settings/webhooks-settings';
 
 export default function SettingsPage() {
@@ -19,6 +20,7 @@ export default function SettingsPage() {
       {/* Content */}
       <div className="flex-1 overflow-y-auto">
         {activeSection === 'default-messages' && <DefaultMessagesSettings />}
+        {activeSection === 'follow-up' && <FollowUpSettings />}
         {activeSection === 'webhooks' && <WebhooksSettings />}
       </div>
     </div>

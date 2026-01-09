@@ -4,6 +4,7 @@ import { Contact, useContacts } from '@/hooks/use-contacts';
 import { Simulation } from '@/lib/api';
 import { Button } from '@/components/ui/button';
 import { useState, useEffect } from 'react';
+import { useFocusTrap } from '@/hooks/use-focus-trap';
 
 interface ContactDetailsCardProps {
   contact: Contact;
@@ -16,6 +17,7 @@ export function ContactDetailsCard({ contact, onClose, onOpenChat }: ContactDeta
   const [simulations, setSimulations] = useState<Simulation[]>([]);
   const [isLoadingSimulations, setIsLoadingSimulations] = useState(true);
   const [showClientData, setShowClientData] = useState(false);
+  const modalRef = useFocusTrap(true);
 
   useEffect(() => {
     async function loadSimulations() {
@@ -33,13 +35,30 @@ export function ContactDetailsCard({ contact, onClose, onOpenChat }: ContactDeta
     loadSimulations();
   }, [contact.id]);
 
+  useEffect(() => {
+    const handleModalClose = () => onClose();
+    const element = modalRef.current;
+    element?.addEventListener('modal-close', handleModalClose);
+    return () => element?.removeEventListener('modal-close', handleModalClose);
+  }, [onClose, modalRef]);
+
   // Pegar a simulação mais recente
   const latestSimulation = simulations[0];
   const simulationData = latestSimulation?.webhook_data || latestSimulation?.output;
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-6">
-      <div className="bg-surface rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+    <div 
+      className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 sm:p-6"
+      onClick={onClose}
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="contact-details-title"
+    >
+      <div 
+        ref={modalRef as React.RefObject<HTMLDivElement>}
+        className="bg-surface rounded-2xl max-w-2xl w-full max-h-[90vh] sm:max-h-[85vh] overflow-y-auto"
+        onClick={(e) => e.stopPropagation()}
+      >
         {/* Header */}
         <div className="p-6 border-b border-border">
           <div className="flex items-start justify-between">
@@ -48,7 +67,7 @@ export function ContactDetailsCard({ contact, onClose, onOpenChat }: ContactDeta
                 <i className="fi fi-rr-user text-2xl text-brand"></i>
               </div>
               <div>
-                <h2 className="text-title text-text-primary mb-1">
+                <h2 id="contact-details-title" className="text-title text-text-primary mb-1">
                   {contact.name || 'Sem nome'}
                 </h2>
                 <div className="flex flex-col gap-1 text-sm text-text-secondary">
@@ -69,9 +88,10 @@ export function ContactDetailsCard({ contact, onClose, onOpenChat }: ContactDeta
             </div>
             <button
               onClick={onClose}
-              className="w-10 h-10 flex items-center justify-center rounded-xl hover:bg-background transition-colors"
+              aria-label="Fechar detalhes do contato"
+              className="w-10 h-10 flex items-center justify-center rounded-xl hover:bg-background transition-colors focus:outline-none focus:ring-2 focus:ring-brand"
             >
-              <i className="fi fi-rr-cross text-xl"></i>
+              <i className="fi fi-rr-cross text-xl" aria-hidden="true"></i>
             </button>
           </div>
         </div>
@@ -252,14 +272,15 @@ export function ContactDetailsCard({ contact, onClose, onOpenChat }: ContactDeta
         <div className="p-6 border-t border-border flex gap-3">
           <Button
             onClick={onOpenChat}
-            className="btn-primary flex-1"
+            className="flex-1 bg-brand hover:bg-brand-600 text-white h-12"
           >
-            <i className="fi fi-rr-comment-alt text-base mr-2"></i>
+            <i className="fi fi-rr-comment-alt text-base mr-2" aria-hidden="true"></i>
             Ver Conversa
           </Button>
           <Button
             onClick={onClose}
-            className="btn-secondary flex-1"
+            variant="outline"
+            className="flex-1 h-12"
           >
             Fechar
           </Button>

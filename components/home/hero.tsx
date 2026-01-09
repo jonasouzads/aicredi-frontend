@@ -27,7 +27,7 @@ export function Hero() {
 
           {/* Description */}
           <p className="text-xl md:text-2xl text-text-secondary mb-12 max-w-3xl mx-auto leading-relaxed">
-            O AiCredy atende seus clientes sozinho, filtra quem realmente tem acesso a crédito e envia propostas automaticamente. 
+            O AiCredi atende seus clientes sozinho, filtra quem realmente tem acesso a crédito e envia propostas automaticamente. 
             <span className="font-semibold text-text-primary"> Ideal para CORBAN que querem vender no automático.</span>
           </p>
 

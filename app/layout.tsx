@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import Script from "next/script";
 import "./globals.css";
 import { ClientProviders } from "@/components/providers/client-providers";
 
@@ -32,6 +33,10 @@ export default function RootLayout({
   return (
     <html lang="pt-BR" suppressHydrationWarning>
       <head>
+        <link 
+          rel="preconnect" 
+          href="https://cdn-uicons.flaticon.com"
+        />
         <link 
           rel="stylesheet" 
           href="https://cdn-uicons.flaticon.com/3.0.0/uicons-regular-rounded/css/uicons-regular-rounded.css"

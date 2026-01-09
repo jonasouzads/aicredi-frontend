@@ -61,11 +61,20 @@ export function KanbanCard({ contact, onViewDetails, onToggleAi, aiPaused = fals
       onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}
       onClick={() => onViewDetails(contact)}
+      role="button"
+      tabIndex={0}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          onViewDetails(contact);
+        }
+      }}
+      aria-label={`Ver detalhes de ${contact.name || 'contato sem nome'}${contact.phone ? `, telefone ${contact.phone}` : ''}`}
       className={`
         bg-white rounded-lg p-3 mb-2 cursor-pointer
-        hover:bg-gray-50
-        transition-all duration-300 ease-in-out
-        ${isDragging ? 'opacity-50 rotate-2' : ''}
+        hover:bg-gray-50 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-brand focus:ring-offset-2
+        transition-all duration-200 ease-in-out
+        ${isDragging ? 'opacity-50 rotate-2 scale-105' : ''}
         ${isTogglingAi ? 'opacity-75' : ''}
       `}
     >
@@ -89,25 +98,31 @@ export function KanbanCard({ contact, onViewDetails, onToggleAi, aiPaused = fals
           <button
             onClick={handleToggleAi}
             disabled={isTogglingAi}
+            aria-label={localAiPaused ? 'Ativar IA para este contato' : 'Pausar IA para este contato'}
+            aria-pressed={!localAiPaused}
             className={`
               flex-shrink-0 p-1.5 rounded-md 
               transition-all duration-200 ease-in-out
               transform hover:scale-110 active:scale-95
+              focus:outline-none focus:ring-2 focus:ring-offset-2
               ${localAiPaused 
-                ? 'bg-orange-100 text-orange-600 hover:bg-orange-200 hover:shadow-md' 
-                : 'bg-green-100 text-green-600 hover:bg-green-200 hover:shadow-md'
+                ? 'bg-orange-100 text-orange-600 hover:bg-orange-200 hover:shadow-md focus:ring-orange-500' 
+                : 'bg-green-100 text-green-600 hover:bg-green-200 hover:shadow-md focus:ring-green-500'
               }
               ${isTogglingAi ? 'opacity-50 cursor-not-allowed scale-100' : ''}
             `}
             title={localAiPaused ? 'Ativar IA' : 'Pausar IA'}
           >
             {isTogglingAi ? (
-              <i className="fi fi-rr-spinner text-xs animate-spin"></i>
+              <i className="fi fi-rr-spinner text-xs animate-spin" aria-hidden="true"></i>
             ) : localAiPaused ? (
-              <i className="fi fi-rr-play text-xs"></i>
+              <i className="fi fi-rr-play text-xs" aria-hidden="true"></i>
             ) : (
-              <i className="fi fi-rr-pause text-xs"></i>
+              <i className="fi fi-rr-pause text-xs" aria-hidden="true"></i>
             )}
+            <span className="sr-only">
+              {isTogglingAi ? 'Processando...' : localAiPaused ? 'Ativar IA' : 'Pausar IA'}
+            </span>
           </button>
         )}
       </div>

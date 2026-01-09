@@ -24,10 +24,12 @@ export function WebhooksSettings() {
   const loadWebhooks = async () => {
     try {
       setIsLoading(true);
-      const data = await api.getWebhooks();
-      setWebhooks(data);
+      const response = await api.getWebhooks();
+      // A API retorna { webhooks: [...], total: number }
+      setWebhooks(response.webhooks || []);
     } catch (error: any) {
       toast.error('Erro ao carregar webhooks', error.message);
+      setWebhooks([]); // Garantir array vazio em caso de erro
     } finally {
       setIsLoading(false);
     }

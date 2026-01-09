@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 import { Contact, Conversation, useContacts } from '@/hooks/use-contacts';
 import { ChatHeader } from './chat-header';
 import { ChatMessageBubble } from './chat-message-bubble';
+import { useFocusTrap } from '@/hooks/use-focus-trap';
 
 interface ChatModalProps {
   contact: Contact;
@@ -15,6 +16,7 @@ export function ChatModal({ contact, onClose }: ChatModalProps) {
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const modalRef = useFocusTrap(true);
 
   useEffect(() => {
     loadConversations();
@@ -26,6 +28,13 @@ export function ChatModal({ contact, onClose }: ChatModalProps) {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
   }, [conversations, isLoading]);
+
+  useEffect(() => {
+    const handleModalClose = () => onClose();
+    const element = modalRef.current;
+    element?.addEventListener('modal-close', handleModalClose);
+    return () => element?.removeEventListener('modal-close', handleModalClose);
+  }, [onClose, modalRef]);
 
   const loadConversations = async () => {
     try {
@@ -39,17 +48,19 @@ export function ChatModal({ contact, onClose }: ChatModalProps) {
     }
   };
 
-  // Fundo estilo WhatsApp (padrão geométrico sutil)
-  // Vamos usar uma cor sólida #EFEAE2 que é a cor de fundo padrão do WhatsApp Web se não tiver imagem
-  const backgroundStyle = {
-    backgroundColor: '#EFEAE2',
-    backgroundImage: 'url("https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png")',
-    backgroundOpacity: 0.4,
-  };
-
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 sm:p-6 animate-in fade-in duration-200">
-      <div className="bg-surface rounded-2xl shadow-2xl max-w-4xl w-full h-[85vh] flex flex-col overflow-hidden">
+    <div 
+      className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 sm:p-6 animate-in fade-in duration-200"
+      onClick={onClose}
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="chat-modal-title"
+    >
+      <div 
+        ref={modalRef as React.RefObject<HTMLDivElement>}
+        className="bg-surface rounded-2xl shadow-2xl max-w-4xl w-full h-[90vh] sm:h-[85vh] flex flex-col overflow-hidden"
+        onClick={(e) => e.stopPropagation()}
+      >
         
         {/* Header */}
         <ChatHeader 

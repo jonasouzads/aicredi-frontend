@@ -52,21 +52,9 @@ export function KanbanColumn({
     }
   };
 
-  const getColumnBg = (status: string) => {
-    switch (status) {
-      case 'new':
-        return 'bg-gradient-to-b from-blue-50 to-background';
-      case 'analysis':
-        return 'bg-gradient-to-b from-yellow-50 to-background';
-      case 'rejected':
-        return 'bg-gradient-to-b from-red-50 to-background';
-      case 'approved':
-        return 'bg-gradient-to-b from-green-50 to-background';
-      case 'closed':
-        return 'bg-gradient-to-b from-gray-50 to-background';
-      default:
-        return 'bg-background';
-    }
+  const getColumnBg = () => {
+    // Fundo neutro para melhor legibilidade e contraste
+    return 'bg-[#F6F7F9]';
   };
 
   const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
@@ -79,13 +67,29 @@ export function KanbanColumn({
     }
   };
 
+  const handleWheel = (e: React.WheelEvent<HTMLDivElement>) => {
+    const target = e.currentTarget;
+    const isScrollingDown = e.deltaY > 0;
+    const isScrollingUp = e.deltaY < 0;
+    const isAtBottom = target.scrollHeight - target.scrollTop === target.clientHeight;
+    const isAtTop = target.scrollTop === 0;
+
+    // Prevenir propagação do scroll quando estiver no limite
+    if ((isAtBottom && isScrollingDown) || (isAtTop && isScrollingUp)) {
+      e.stopPropagation();
+    }
+  };
+
   return (
-    <div className={`flex flex-col flex-shrink-0 w-[320px] rounded-xl ${getColumnBg(status)} p-3 h-full`}>
+    <div className={`flex flex-col flex-shrink-0 w-full sm:w-[320px] rounded-xl ${getColumnBg()} p-3 h-full`}>
       {/* Column Header */}
       <div className="flex-shrink-0 mb-3">
         <div className="flex items-center justify-between px-2">
-          <h2 className="text-sm font-semibold text-text-primary">{title}</h2>
-          <span className="text-xs text-text-secondary bg-white px-2 py-1 rounded font-medium">
+          <h2 className="text-sm font-semibold text-text-primary flex items-center gap-2">
+            <i className={`fi ${icon} text-lg`} aria-hidden="true"></i>
+            {title}
+          </h2>
+          <span className="text-xs text-text-secondary bg-white px-2 py-1 rounded font-medium" aria-label={`${totalCount} contatos`}>
             {totalCount}
           </span>
         </div>
@@ -97,14 +101,17 @@ export function KanbanColumn({
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
         onScroll={handleScroll}
+        onWheel={handleWheel}
+        role="region"
+        aria-label={`Coluna ${title}`}
         className={`
           flex-1 overflow-y-auto rounded-lg transition-all kanban-scroll
           ${isDragOver ? 'bg-brand-100 border-2 border-dashed border-brand' : ''}
         `}
       >
         {contacts.length === 0 ? (
-          <div className="flex flex-col items-center justify-center h-40 text-center">
-            <i className="fi fi-rr-inbox text-4xl text-text-secondary mb-2"></i>
+          <div className="flex flex-col items-center justify-center h-40 text-center" role="status">
+            <i className="fi fi-rr-inbox text-4xl text-text-secondary mb-2" aria-hidden="true"></i>
             <p className="text-body text-text-secondary">Nenhum contato</p>
           </div>
         ) : (
@@ -115,20 +122,21 @@ export function KanbanColumn({
                 contact={contact}
                 onViewDetails={onViewDetails}
                 onToggleAi={onToggleAi}
-                aiPaused={(contact as any).conversations?.[0]?.ai_paused || false}
+                aiPaused={contact.conversations?.[0]?.ai_paused || false}
               />
             ))}
             
             {/* Loading Indicator */}
             {isLoadingMore && (
-              <div className="flex items-center justify-center py-4">
-                <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-brand"></div>
+              <div className="flex items-center justify-center py-4" role="status" aria-live="polite">
+                <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-brand" aria-hidden="true"></div>
+                <span className="sr-only">Carregando mais contatos...</span>
               </div>
             )}
             
             {/* End Message */}
             {!hasMore && contacts.length > 0 && (
-              <div className="text-center py-4 text-xs text-text-secondary">
+              <div className="text-center py-4 text-xs text-text-secondary" role="status">
                 Todos os contatos carregados
               </div>
             )}

@@ -223,7 +223,7 @@ class APIClient {
   }
 
   // ==================== INTEGRATION WEBHOOKS ====================
-  async getWebhooks(): Promise<IntegrationWebhook[]> {
+  async getWebhooks(): Promise<{ webhooks: IntegrationWebhook[]; total: number }> {
     return this.request('/integration-webhooks');
   }
 
@@ -283,6 +283,39 @@ class APIClient {
     return this.request(`/integration-webhooks/deliveries/${deliveryId}/retry`, {
       method: 'POST',
     });
+  }
+
+  // ==================== FOLLOW-UP ====================
+  async getFollowUpSettings(): Promise<FollowUpSettings> {
+    return this.request('/v1/follow-up/settings');
+  }
+
+  async updateFollowUpSettings(settings: Partial<FollowUpSettings>): Promise<FollowUpSettings> {
+    return this.request('/v1/follow-up/settings', {
+      method: 'PATCH',
+      body: JSON.stringify(settings),
+    });
+  }
+
+  async createFollowUp(conversationId: string, data: CreateFollowUpDto): Promise<ConversationFollowUp> {
+    return this.request(`/v1/conversations/${conversationId}/follow-up`, {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  }
+
+  async getFollowUp(conversationId: string): Promise<ConversationFollowUp | null> {
+    return this.request(`/v1/conversations/${conversationId}/follow-up`);
+  }
+
+  async deleteFollowUp(conversationId: string): Promise<{ success: boolean }> {
+    return this.request(`/v1/conversations/${conversationId}/follow-up`, {
+      method: 'DELETE',
+    });
+  }
+
+  async getPendingFollowUps(): Promise<ConversationFollowUp[]> {
+    return this.request('/v1/follow-ups/pending');
   }
 }
 
@@ -397,6 +430,8 @@ export interface Conversation {
   id: string;
   status: string;
   last_message_at?: string;
+  ai_paused?: boolean;
+  current_agent_id?: string;
   current_agent?: {
     id: string;
     name: string;
@@ -566,6 +601,37 @@ export interface WebhookDelivery {
   max_attempts: number;
   next_retry_at?: string;
   duration_ms?: number;
+  created_at: string;
+  updated_at: string;
+}
+
+// ==================== FOLLOW-UP TYPES ====================
+export interface FollowUpSettings {
+  enabled: boolean;
+  default_delay_minutes: number;
+  default_cutoff_time: string; // Formato HH:MM (ex: "20:00", "02:30")
+  default_mode: 'ai' | 'text';
+  default_content: string;
+}
+
+export interface CreateFollowUpDto {
+  delay_minutes: number;
+  cutoff_time: string; // Formato HH:MM
+  mode: 'ai' | 'text';
+  content: string;
+}
+
+export interface ConversationFollowUp {
+  id: string;
+  tenant_id: string;
+  conversation_id: string;
+  delay_minutes: number;
+  cutoff_time: string; // Formato HH:MM
+  mode: 'ai' | 'text';
+  content: string;
+  status: 'pending' | 'sent' | 'cancelled';
+  scheduled_at: string;
+  sent_at?: string;
   created_at: string;
   updated_at: string;
 }

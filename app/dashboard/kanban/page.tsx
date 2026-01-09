@@ -114,7 +114,8 @@ export default function KanbanPage() {
     // 6. Atualizar no servidor em segundo plano
     try {
       await updateStatus(contactId, newStatus);
-      // Sucesso silencioso - já movemos o card
+      // Sucesso - card já foi movido visualmente
+      toast.success('Status atualizado', 'Contato movido com sucesso');
     } catch (error: any) {
       // 7. Se falhar, reverter a mudança
       toast.error('Erro ao atualizar status', 'Revertendo alteração...');
@@ -280,7 +281,7 @@ export default function KanbanPage() {
       </div>
 
       {/* Kanban Board */}
-      <div className="flex gap-4 overflow-x-auto flex-1 min-h-0">
+      <div className="flex flex-col sm:flex-row gap-4 overflow-x-auto flex-1 min-h-0">
         {displayData && (
           <>
             <KanbanColumn

@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { formatError } from "@/lib/error-messages";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -40,7 +41,7 @@ export function LoginForm({
       if (error) throw error;
       router.push("/dashboard");
     } catch (error: unknown) {
-      setError(error instanceof Error ? error.message : "An error occurred");
+      setError(formatError(error));
     } finally {
       setIsLoading(false);
     }

@@ -23,7 +23,7 @@ export default function DashboardPage() {
 
   if (loading) {
     return (
-      <div>
+      <div role="status" aria-live="polite" aria-label="Carregando dashboard">
         <div className="mb-8">
           <div className="animate-pulse bg-background rounded h-8 w-64 mb-2"></div>
           <div className="animate-pulse bg-background rounded h-4 w-96"></div>
@@ -56,6 +56,7 @@ export default function DashboardPage() {
             ))}
           </div>
         </div>
+        <span className="sr-only">Carregando informações do dashboard...</span>
       </div>
     );
   }

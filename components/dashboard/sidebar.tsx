@@ -47,13 +47,14 @@ export function Sidebar() {
       {/* Mobile Menu Button */}
       <button
         onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-        className="lg:hidden fixed top-4 left-4 z-50 w-10 h-10 flex items-center justify-center rounded-xl bg-surface"
-        aria-label="Toggle menu"
+        className="lg:hidden fixed top-4 left-4 z-50 w-10 h-10 flex items-center justify-center rounded-xl bg-surface shadow-md hover:shadow-lg transition-shadow focus:outline-none focus:ring-2 focus:ring-brand"
+        aria-label={isMobileMenuOpen ? "Fechar menu" : "Abrir menu"}
+        aria-expanded={isMobileMenuOpen}
       >
         {isMobileMenuOpen ? (
-          <i className="fi fi-rr-cross text-xl text-text-primary"></i>
+          <i className="fi fi-rr-cross text-xl text-text-primary" aria-hidden="true"></i>
         ) : (
-          <i className="fi fi-rr-menu-burger text-xl text-text-primary"></i>
+          <i className="fi fi-rr-menu-burger text-xl text-text-primary" aria-hidden="true"></i>
         )}
       </button>
 
@@ -80,7 +81,7 @@ export function Sidebar() {
         </div>
 
         {/* Navigation */}
-        <nav className="flex-1 p-6 space-y-2">
+        <nav className="flex-1 p-6 space-y-1" role="navigation" aria-label="Menu principal">
           {navigation.map((item) => {
             const isActive = pathname === item.href;
 
@@ -88,43 +89,47 @@ export function Sidebar() {
               <Link
                 key={item.name}
                 href={item.href}
+                aria-current={isActive ? 'page' : undefined}
                 className={`
-                  flex items-center gap-3 px-5 py-3 rounded-xl transition-all
+                  flex items-center gap-3 px-4 py-2.5 rounded-lg transition-all duration-200
+                  focus:outline-none focus-visible:ring-2 focus-visible:ring-brand/50
                   ${isActive
-                    ? 'bg-brand-50 text-brand font-medium'
-                    : 'text-text-secondary hover:bg-background hover:text-text-primary'
+                    ? 'bg-brand text-white font-medium shadow-sm'
+                    : 'text-text-secondary hover:bg-gray-100 hover:text-text-primary'
                   }
                 `}
               >
-                <i className={`fi ${item.icon} text-xl leading-none flex items-center`}></i>
-                <span className="text-[15px] leading-none">{item.name}</span>
+                <i className={`fi ${item.icon} text-lg leading-none flex items-center`} aria-hidden="true"></i>
+                <span className="text-sm leading-none">{item.name}</span>
               </Link>
             );
           })}
         </nav>
 
         {/* Settings & Logout */}
-        <div className="p-6 space-y-2">
+        <div className="p-6 space-y-1 border-t border-gray-100">
           <Link
             href="/dashboard/settings"
             className={`
-              flex items-center gap-3 px-5 py-3 rounded-xl transition-all
+              flex items-center gap-3 px-4 py-2.5 rounded-lg transition-all duration-200
+              focus:outline-none focus-visible:ring-2 focus-visible:ring-brand/50
               ${pathname.startsWith('/dashboard/settings')
-                ? 'bg-brand-50 text-brand font-medium'
-                : 'text-text-secondary hover:bg-background hover:text-text-primary'
+                ? 'bg-brand text-white font-medium shadow-sm'
+                : 'text-text-secondary hover:bg-gray-100 hover:text-text-primary'
               }
             `}
           >
-            <i className="fi fi-rr-settings text-xl leading-none flex items-center"></i>
-            <span className="text-[15px] leading-none">Configurações</span>
+            <i className="fi fi-rr-settings text-lg leading-none flex items-center" aria-hidden="true"></i>
+            <span className="text-sm leading-none">Configurações</span>
           </Link>
           
           <button
             onClick={handleLogout}
-            className="flex items-center gap-3 px-5 py-3 rounded-xl w-full text-text-secondary hover:bg-background hover:text-text-primary transition-all"
+            className="flex items-center gap-3 px-4 py-2.5 rounded-lg w-full text-text-secondary hover:bg-gray-100 hover:text-text-primary transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand/50"
+            aria-label="Sair da conta"
           >
-            <i className="fi fi-rr-sign-out-alt text-xl leading-none flex items-center"></i>
-            <span className="text-[15px] leading-none">Sair</span>
+            <i className="fi fi-rr-sign-out-alt text-lg leading-none flex items-center" aria-hidden="true"></i>
+            <span className="text-sm leading-none">Sair</span>
           </button>
         </div>
       </aside>

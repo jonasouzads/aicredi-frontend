@@ -59,26 +59,26 @@ export function ToastProvider({ children }: { children: ReactNode }) {
   const getToastStyles = (type: ToastType) => {
     switch (type) {
       case 'success':
-        return 'bg-green-50 border-green-200 text-green-800';
+        return 'bg-white border-green-500 text-green-700';
       case 'error':
-        return 'bg-red-50 border-red-200 text-red-800';
+        return 'bg-white border-red-500 text-red-700';
       case 'warning':
-        return 'bg-yellow-50 border-yellow-200 text-yellow-800';
+        return 'bg-white border-yellow-500 text-yellow-700';
       case 'info':
-        return 'bg-brand-50 border-brand-200 text-brand-800';
+        return 'bg-white border-brand text-brand-700';
     }
   };
 
   const getToastIcon = (type: ToastType) => {
     switch (type) {
       case 'success':
-        return 'fi-rr-check-circle';
+        return { icon: 'fi-rr-check-circle', color: 'text-green-500' };
       case 'error':
-        return 'fi-rr-cross-circle';
+        return { icon: 'fi-rr-cross-circle', color: 'text-red-500' };
       case 'warning':
-        return 'fi-rr-exclamation';
+        return { icon: 'fi-rr-exclamation', color: 'text-yellow-500' };
       case 'info':
-        return 'fi-rr-info';
+        return { icon: 'fi-rr-info', color: 'text-brand' };
     }
   };
 
@@ -86,35 +86,39 @@ export function ToastProvider({ children }: { children: ReactNode }) {
     <ToastContext.Provider value={{ showToast, success, error, warning, info }}>
       {children}
       
-      {/* Toast Container */}
-      <div className="fixed top-4 right-4 z-50 flex flex-col gap-3 max-w-md w-full px-4 sm:px-0">
-        {toasts.map((toast) => (
-          <div
-            key={toast.id}
-            className={`
-              ${getToastStyles(toast.type)}
-              border-2 rounded-xl p-4 shadow-lg
-              animate-in slide-in-from-top-5 duration-300
-              flex items-start gap-3
-            `}
-          >
-            <i className={`fi ${getToastIcon(toast.type)} text-xl flex-shrink-0 mt-0.5`}></i>
-            
-            <div className="flex-1 min-w-0">
-              <h4 className="font-semibold text-sm mb-1">{toast.title}</h4>
-              {toast.message && (
-                <p className="text-sm opacity-90">{toast.message}</p>
-              )}
-            </div>
-
-            <button
-              onClick={() => removeToast(toast.id)}
-              className="flex-shrink-0 hover:opacity-70 transition-opacity"
+      {/* Toast Container - Canto Inferior Direito */}
+      <div className="fixed bottom-4 right-4 z-50 flex flex-col-reverse gap-2 max-w-sm w-full px-4 sm:px-0">
+        {toasts.map((toast) => {
+          const iconData = getToastIcon(toast.type);
+          return (
+            <div
+              key={toast.id}
+              className={`
+                ${getToastStyles(toast.type)}
+                border-l-4 rounded-lg px-3 py-2.5 shadow-lg backdrop-blur-sm
+                animate-in slide-in-from-bottom-5 duration-300
+                flex items-center gap-2.5
+              `}
             >
-              <i className="fi fi-rr-cross text-base"></i>
-            </button>
-          </div>
-        ))}
+              <i className={`fi ${iconData.icon} ${iconData.color} text-lg flex-shrink-0`} aria-hidden="true"></i>
+              
+              <div className="flex-1 min-w-0">
+                <p className="font-medium text-xs text-gray-900">{toast.title}</p>
+                {toast.message && (
+                  <p className="text-xs text-gray-600 mt-0.5">{toast.message}</p>
+                )}
+              </div>
+
+              <button
+                onClick={() => removeToast(toast.id)}
+                className="flex-shrink-0 text-gray-400 hover:text-gray-600 transition-colors"
+                aria-label="Fechar notificação"
+              >
+                <i className="fi fi-rr-cross text-xs" aria-hidden="true"></i>
+              </button>
+            </div>
+          );
+        })}
       </div>
     </ToastContext.Provider>
   );

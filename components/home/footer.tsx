@@ -61,7 +61,7 @@ export function Footer() {
 
         {/* Copyright */}
         <div className="pt-8 border-t border-border text-center">
-          <p className="text-text-secondary">© 2025 AICredy. Todos os direitos reservados.</p>
+          <p className="text-text-secondary">© 2025 AICredi. Todos os direitos reservados.</p>
         </div>
       </div>
     </footer>

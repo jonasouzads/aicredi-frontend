@@ -22,13 +22,9 @@ export function AuthLayout({ children }: AuthLayoutProps) {
         <div className="relative z-10">
           {/* Logo */}
           <div className="mb-16">
-            <img 
-              src="/logo-white.svg" 
-              alt="AICredy" 
-              width={140} 
-              height={40}
-              className="h-10"
-            />
+            <div className="text-white text-3xl font-bold">
+              AI<span className="text-accent">Credi</span>
+            </div>
           </div>
 
           {/* Headline e Descrição */}
@@ -40,7 +36,7 @@ export function AuthLayout({ children }: AuthLayoutProps) {
               Para corban que atende CLT, FGTS e contas de energia.
               <br />
               <span className="font-medium">
-                O AiCredy responde, coleta dados e fecha propostas sozinho.
+                O AiCredi responde, coleta dados e fecha propostas sozinho.
               </span>
             </p>
           </div>
@@ -78,7 +74,7 @@ export function AuthLayout({ children }: AuthLayoutProps) {
 
           {/* Footer */}
           <p className="text-center text-sm text-text-secondary mt-6">
-            © 2025 AICredy. Todos os direitos reservados.
+            © 2025 AICredi. Todos os direitos reservados.
           </p>
         </div>
       </div>

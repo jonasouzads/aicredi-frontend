@@ -12,6 +12,11 @@ const sections = [
     icon: 'fi-rr-comment-alt',
   },
   {
+    id: 'follow-up',
+    name: 'Follow-up',
+    icon: 'fi-rr-time-forward',
+  },
+  {
     id: 'webhooks',
     name: 'Webhooks',
     icon: 'fi-rr-link-alt',

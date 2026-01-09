@@ -10,7 +10,7 @@ const features = [
   {
     icon: MessageSquare,
     title: 'WhatsApp Integrado',
-    description: 'O cliente fala com seu número e o AiCredy faz todo atendimento — análise, perguntas, atualização e envio da oferta.',
+    description: 'O cliente fala com seu número e o AiCredi faz todo atendimento — análise, perguntas, atualização e envio da oferta.',
     color: 'accent',
   },
   {
