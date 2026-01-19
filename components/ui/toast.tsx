@@ -59,24 +59,24 @@ export function ToastProvider({ children }: { children: ReactNode }) {
   const getToastStyles = (type: ToastType) => {
     switch (type) {
       case 'success':
-        return 'bg-white border-green-500 text-green-700';
+        return 'bg-surface border-success text-success';
       case 'error':
-        return 'bg-white border-red-500 text-red-700';
+        return 'bg-surface border-error text-error';
       case 'warning':
-        return 'bg-white border-yellow-500 text-yellow-700';
+        return 'bg-surface border-warning text-warning';
       case 'info':
-        return 'bg-white border-brand text-brand-700';
+        return 'bg-surface border-brand text-brand-700';
     }
   };
 
   const getToastIcon = (type: ToastType) => {
     switch (type) {
       case 'success':
-        return { icon: 'fi-rr-check-circle', color: 'text-green-500' };
+        return { icon: 'fi-rr-check-circle', color: 'text-success' };
       case 'error':
-        return { icon: 'fi-rr-cross-circle', color: 'text-red-500' };
+        return { icon: 'fi-rr-cross-circle', color: 'text-error' };
       case 'warning':
-        return { icon: 'fi-rr-exclamation', color: 'text-yellow-500' };
+        return { icon: 'fi-rr-exclamation', color: 'text-warning' };
       case 'info':
         return { icon: 'fi-rr-info', color: 'text-brand' };
     }
@@ -103,15 +103,15 @@ export function ToastProvider({ children }: { children: ReactNode }) {
               <i className={`fi ${iconData.icon} ${iconData.color} text-lg flex-shrink-0`} aria-hidden="true"></i>
               
               <div className="flex-1 min-w-0">
-                <p className="font-medium text-xs text-gray-900">{toast.title}</p>
+                <p className="font-medium text-xs text-text-primary">{toast.title}</p>
                 {toast.message && (
-                  <p className="text-xs text-gray-600 mt-0.5">{toast.message}</p>
+                  <p className="text-xs text-text-secondary mt-0.5">{toast.message}</p>
                 )}
               </div>
 
               <button
                 onClick={() => removeToast(toast.id)}
-                className="flex-shrink-0 text-gray-400 hover:text-gray-600 transition-colors"
+                className="flex-shrink-0 text-text-muted hover:text-text-secondary transition-colors"
                 aria-label="Fechar notificação"
               >
                 <i className="fi fi-rr-cross text-xs" aria-hidden="true"></i>

@@ -81,15 +81,21 @@ export function WebhookFormModal({ webhook, onClose, onSubmit }: WebhookFormModa
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4" onClick={onClose}>
+    <div 
+      className="modal-overlay" 
+      onClick={onClose}
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="webhook-form-title"
+    >
       <div 
-        className="bg-surface rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden shadow-2xl animate-in zoom-in-95 duration-200"
+        className="modal-container-md overflow-hidden animate-in zoom-in-95 duration-200"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-border">
           <div>
-            <h2 className="text-lg font-semibold text-text-primary">
+            <h2 id="webhook-form-title" className="text-lg font-semibold text-text-primary">
               {webhook ? 'Editar Webhook' : 'Novo Webhook'}
             </h2>
             <p className="text-sm text-text-secondary mt-1">
@@ -98,9 +104,10 @@ export function WebhookFormModal({ webhook, onClose, onSubmit }: WebhookFormModa
           </div>
           <button
             onClick={onClose}
-            className="p-2 hover:bg-background rounded-lg transition-colors"
+            className="w-10 h-10 flex items-center justify-center rounded-xl hover:bg-muted transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            aria-label="Fechar modal"
           >
-            <i className="fi fi-rr-cross text-text-secondary"></i>
+            <i className="fi fi-rr-cross text-text-secondary" aria-hidden="true"></i>
           </button>
         </div>
 
@@ -271,26 +278,22 @@ export function WebhookFormModal({ webhook, onClose, onSubmit }: WebhookFormModa
         </form>
 
         {/* Footer */}
-        <div className="flex items-center justify-end gap-3 p-6 border-t border-border bg-background/50">
-          <Button variant="outline" onClick={onClose} disabled={isSubmitting}>
+        <div className="flex items-center justify-end gap-3 p-6 border-t border-border">
+          <Button 
+            type="button"
+            onClick={onClose} 
+            disabled={isSubmitting}
+            className="btn-secondary"
+          >
             Cancelar
           </Button>
           <Button 
+            type="submit"
             onClick={handleSubmit} 
             disabled={isSubmitting || !formData.name.trim() || !formData.url.trim()}
             className="btn-primary"
           >
-            {isSubmitting ? (
-              <>
-                <i className="fi fi-rr-spinner animate-spin mr-2"></i>
-                Salvando...
-              </>
-            ) : (
-              <>
-                <i className="fi fi-rr-disk mr-2"></i>
-                {webhook ? 'Salvar Alterações' : 'Criar Webhook'}
-              </>
-            )}
+            {isSubmitting ? 'Salvando...' : (webhook ? 'Salvar Alterações' : 'Criar Webhook')}
           </Button>
         </div>
       </div>

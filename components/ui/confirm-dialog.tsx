@@ -88,7 +88,7 @@ export function ConfirmProvider({ children }: { children: ReactNode }) {
 
       {/* Modal Overlay - só renderiza se estiver aberto */}
       {isOpen && options && (
-      <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+      <div className="modal-overlay">
         <div 
           className="bg-surface rounded-2xl p-6 sm:p-8 max-w-md w-full shadow-2xl animate-in zoom-in-95 duration-200"
           onClick={(e) => e.stopPropagation()}
@@ -197,7 +197,7 @@ export function ConfirmDialog({
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4" onClick={onClose}>
+    <div className="modal-overlay" onClick={onClose}>
       <div 
         className="bg-surface rounded-2xl p-6 sm:p-8 max-w-md w-full shadow-2xl animate-in zoom-in-95 duration-200"
         onClick={(e) => e.stopPropagation()}

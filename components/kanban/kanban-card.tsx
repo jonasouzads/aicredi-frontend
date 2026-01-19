@@ -71,8 +71,8 @@ export function KanbanCard({ contact, onViewDetails, onToggleAi, aiPaused = fals
       }}
       aria-label={`Ver detalhes de ${contact.name || 'contato sem nome'}${contact.phone ? `, telefone ${contact.phone}` : ''}`}
       className={`
-        bg-white rounded-lg p-3 mb-2 cursor-pointer
-        hover:bg-gray-50 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-brand focus:ring-offset-2
+        bg-surface rounded-lg p-3 mb-2 cursor-pointer
+        hover:bg-surface-hover hover:shadow-md focus:outline-none focus:ring-2 focus:ring-brand focus:ring-offset-2
         transition-all duration-200 ease-in-out
         ${isDragging ? 'opacity-50 rotate-2 scale-105' : ''}
         ${isTogglingAi ? 'opacity-75' : ''}
@@ -106,8 +106,8 @@ export function KanbanCard({ contact, onViewDetails, onToggleAi, aiPaused = fals
               transform hover:scale-110 active:scale-95
               focus:outline-none focus:ring-2 focus:ring-offset-2
               ${localAiPaused 
-                ? 'bg-orange-100 text-orange-600 hover:bg-orange-200 hover:shadow-md focus:ring-orange-500' 
-                : 'bg-green-100 text-green-600 hover:bg-green-200 hover:shadow-md focus:ring-green-500'
+                ? 'bg-warning/10 text-warning hover:bg-warning/20 hover:shadow-md focus:ring-warning' 
+                : 'bg-success/10 text-success hover:bg-success/20 hover:shadow-md focus:ring-success'
               }
               ${isTogglingAi ? 'opacity-50 cursor-not-allowed scale-100' : ''}
             `}

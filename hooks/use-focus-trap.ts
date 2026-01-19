@@ -6,8 +6,8 @@ import { useEffect, useRef } from 'react';
  * Hook para criar trap de foco em modais
  * Mantém o foco dentro do elemento especificado
  */
-export function useFocusTrap(isActive: boolean = true) {
-  const elementRef = useRef<HTMLElement>(null);
+export function useFocusTrap<T extends HTMLElement = HTMLDivElement>(isActive: boolean = true) {
+  const elementRef = useRef<T>(null);
 
   useEffect(() => {
     if (!isActive || !elementRef.current) return;

@@ -38,11 +38,14 @@ export default {
           900: "#28520e",
         },
         background: "#FAFBFC", // Fundo geral (mais clean)
-        surface: "#FFFFFF", // Componentes
+        surface: {
+          DEFAULT: "#FFFFFF", // Componentes
+          hover: "#F8FAFC", // Hover state
+        },
         border: "#E5E7EB", // Bordas sutis
         text: {
           primary: "#0F172A", // Texto principal (mais escuro)
-          secondary: "#64748B", // Texto secundário
+          secondary: "#475569", // Texto secundário (melhor contraste 4.5:1)
           muted: "#94A3B8", // Texto desabilitado
         },
         success: "#10B981",

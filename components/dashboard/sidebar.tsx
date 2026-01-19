@@ -61,7 +61,7 @@ export function Sidebar() {
       {/* Overlay para mobile */}
       {isMobileMenuOpen && (
         <div
-          className="lg:hidden fixed inset-0 bg-black/50 z-40"
+          className="lg:hidden fixed inset-0 bg-foreground/50 z-40"
           onClick={() => setIsMobileMenuOpen(false)}
         />
       )}
@@ -91,11 +91,11 @@ export function Sidebar() {
                 href={item.href}
                 aria-current={isActive ? 'page' : undefined}
                 className={`
-                  flex items-center gap-3 px-4 py-2.5 rounded-lg transition-all duration-200
+                  flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all duration-200
                   focus:outline-none focus-visible:ring-2 focus-visible:ring-brand/50
                   ${isActive
-                    ? 'bg-brand text-white font-medium shadow-sm'
-                    : 'text-text-secondary hover:bg-gray-100 hover:text-text-primary'
+                    ? 'bg-brand-50 text-brand font-medium border-l-4 border-brand'
+                    : 'text-text-secondary hover:bg-muted hover:text-text-primary'
                   }
                 `}
               >
@@ -107,15 +107,15 @@ export function Sidebar() {
         </nav>
 
         {/* Settings & Logout */}
-        <div className="p-6 space-y-1 border-t border-gray-100">
+        <div className="p-6 space-y-1 border-t border-border">
           <Link
             href="/dashboard/settings"
             className={`
-              flex items-center gap-3 px-4 py-2.5 rounded-lg transition-all duration-200
+              flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all duration-200
               focus:outline-none focus-visible:ring-2 focus-visible:ring-brand/50
               ${pathname.startsWith('/dashboard/settings')
-                ? 'bg-brand text-white font-medium shadow-sm'
-                : 'text-text-secondary hover:bg-gray-100 hover:text-text-primary'
+                ? 'bg-brand-50 text-brand font-medium border-l-4 border-brand'
+                : 'text-text-secondary hover:bg-muted hover:text-text-primary'
               }
             `}
           >
@@ -125,7 +125,7 @@ export function Sidebar() {
           
           <button
             onClick={handleLogout}
-            className="flex items-center gap-3 px-4 py-2.5 rounded-lg w-full text-text-secondary hover:bg-gray-100 hover:text-text-primary transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand/50"
+            className="flex items-center gap-3 px-4 py-2.5 rounded-xl w-full text-text-secondary hover:bg-muted hover:text-text-primary transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand/50"
             aria-label="Sair da conta"
           >
             <i className="fi fi-rr-sign-out-alt text-lg leading-none flex items-center" aria-hidden="true"></i>

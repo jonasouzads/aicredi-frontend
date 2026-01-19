@@ -54,7 +54,7 @@ export function KanbanColumn({
 
   const getColumnBg = () => {
     // Fundo neutro para melhor legibilidade e contraste
-    return 'bg-[#F6F7F9]';
+    return 'bg-muted';
   };
 
   const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
@@ -68,16 +68,8 @@ export function KanbanColumn({
   };
 
   const handleWheel = (e: React.WheelEvent<HTMLDivElement>) => {
-    const target = e.currentTarget;
-    const isScrollingDown = e.deltaY > 0;
-    const isScrollingUp = e.deltaY < 0;
-    const isAtBottom = target.scrollHeight - target.scrollTop === target.clientHeight;
-    const isAtTop = target.scrollTop === 0;
-
-    // Prevenir propagação do scroll quando estiver no limite
-    if ((isAtBottom && isScrollingDown) || (isAtTop && isScrollingUp)) {
-      e.stopPropagation();
-    }
+    // Sempre parar a propagação para evitar scroll da página pai
+    e.stopPropagation();
   };
 
   return (
@@ -89,7 +81,7 @@ export function KanbanColumn({
             <i className={`fi ${icon} text-lg`} aria-hidden="true"></i>
             {title}
           </h2>
-          <span className="text-xs text-text-secondary bg-white px-2 py-1 rounded font-medium" aria-label={`${totalCount} contatos`}>
+          <span className="text-xs text-text-secondary bg-surface px-2 py-1 rounded font-medium" aria-label={`${totalCount} contatos`}>
             {totalCount}
           </span>
         </div>
@@ -105,7 +97,7 @@ export function KanbanColumn({
         role="region"
         aria-label={`Coluna ${title}`}
         className={`
-          flex-1 overflow-y-auto rounded-lg transition-all kanban-scroll
+          flex-1 overflow-y-auto rounded-lg transition-all kanban-scroll overscroll-contain
           ${isDragOver ? 'bg-brand-100 border-2 border-dashed border-brand' : ''}
         `}
       >

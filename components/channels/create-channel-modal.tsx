@@ -1,9 +1,10 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useChannels } from '@/hooks/use-channels';
 import { useAgents } from '@/hooks/use-agents';
 import { useToast } from '@/components/ui/toast';
+import { useFocusTrap } from '@/hooks/use-focus-trap';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -24,6 +25,7 @@ export function CreateChannelModal({ onClose }: CreateChannelModalProps) {
   const { createChannel } = useChannels();
   const { agents } = useAgents();
   const toast = useToast();
+  const modalRef = useFocusTrap<HTMLDivElement>(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     type: 'wizebot',
@@ -62,22 +64,45 @@ export function CreateChannelModal({ onClose }: CreateChannelModalProps) {
     }
   };
 
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+    };
+    document.addEventListener('keydown', handleEscape);
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.removeEventListener('keydown', handleEscape);
+      document.body.style.overflow = 'unset';
+    };
+  }, [onClose]);
+
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 sm:p-6">
-      <div className="bg-surface rounded-2xl p-6 sm:p-8 max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+    <div 
+      className="modal-overlay"
+      onClick={onClose}
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="create-channel-title"
+    >
+      <div 
+        ref={modalRef}
+        className="modal-container-md p-6 sm:p-8 overflow-y-auto animate-in zoom-in-95 duration-200"
+        onClick={(e) => e.stopPropagation()}
+      >
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-brand-50 rounded-xl flex items-center justify-center">
-              <i className="fi fi-rr-comment-alt text-xl text-brand"></i>
+              <i className="fi fi-rr-comment-alt text-xl text-brand" aria-hidden="true"></i>
             </div>
-            <h2 className="text-title text-text-primary">Criar Novo Canal</h2>
+            <h2 id="create-channel-title" className="text-title text-text-primary">Criar Novo Canal</h2>
           </div>
           <button
             onClick={onClose}
-            className="w-10 h-10 flex items-center justify-center rounded-xl hover:bg-background transition-colors"
+            className="w-10 h-10 flex items-center justify-center rounded-xl hover:bg-muted transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            aria-label="Fechar modal"
           >
-            <i className="fi fi-rr-cross text-xl"></i>
+            <i className="fi fi-rr-cross text-xl text-text-secondary" aria-hidden="true"></i>
           </button>
         </div>
 
@@ -223,7 +248,7 @@ export function CreateChannelModal({ onClose }: CreateChannelModalProps) {
           </div>
 
           {/* Status Ativo */}
-          <div className="flex items-center justify-between p-4 rounded-xl border-2 border-background">
+          <div className="flex items-center justify-between p-4 rounded-xl border-2 border-border">
             <div className="flex-1">
               <Label htmlFor="is_active" className="text-text-primary font-medium cursor-pointer">
                 Canal Ativo
@@ -240,20 +265,20 @@ export function CreateChannelModal({ onClose }: CreateChannelModalProps) {
           </div>
 
           {/* Actions */}
-          <div className="flex flex-col sm:flex-row gap-3 pt-4">
-            <Button
-              type="submit"
-              disabled={isSubmitting}
-              className="btn-primary flex-1 order-2 sm:order-1"
-            >
-              {isSubmitting ? 'Criando...' : 'Criar Canal'}
-            </Button>
+          <div className="flex flex-col-reverse sm:flex-row gap-3 pt-6 border-t border-border mt-6">
             <Button
               type="button"
               onClick={onClose}
-              className="btn-secondary flex-1 order-1 sm:order-2"
+              className="btn-secondary flex-1"
             >
               Cancelar
+            </Button>
+            <Button
+              type="submit"
+              disabled={isSubmitting}
+              className="btn-primary flex-1"
+            >
+              {isSubmitting ? 'Criando...' : 'Criar Canal'}
             </Button>
           </div>
         </form>

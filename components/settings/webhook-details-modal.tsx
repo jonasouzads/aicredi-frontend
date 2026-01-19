@@ -55,42 +55,42 @@ export function WebhookDetailsModal({ webhook, onClose }: WebhookDetailsModalPro
     switch (status) {
       case 'delivered':
         return (
-          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-green-50 text-green-700">
-            <i className="fi fi-rr-check text-[10px]"></i>
+          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-medium bg-success/10 text-success">
+            <i className="fi fi-rr-check text-[10px]" aria-hidden="true"></i>
             Entregue
           </span>
         );
       case 'failed':
         return (
-          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-red-50 text-red-700">
-            <i className="fi fi-rr-cross text-[10px]"></i>
+          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-medium bg-error/10 text-error">
+            <i className="fi fi-rr-cross text-[10px]" aria-hidden="true"></i>
             Falhou
           </span>
         );
       case 'retrying':
         return (
-          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-yellow-50 text-yellow-700">
-            <i className="fi fi-rr-refresh text-[10px]"></i>
+          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-medium bg-warning/10 text-warning">
+            <i className="fi fi-rr-refresh text-[10px]" aria-hidden="true"></i>
             Retry
           </span>
         );
       case 'pending':
         return (
-          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-600">
-            <i className="fi fi-rr-clock text-[10px]"></i>
+          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-medium bg-muted text-text-secondary">
+            <i className="fi fi-rr-clock text-[10px]" aria-hidden="true"></i>
             Pendente
           </span>
         );
       case 'processing':
         return (
-          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-blue-50 text-blue-700">
-            <i className="fi fi-rr-spinner animate-spin text-[10px]"></i>
+          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-medium bg-brand-50 text-brand">
+            <i className="fi fi-rr-spinner animate-spin text-[10px]" aria-hidden="true"></i>
             Processando
           </span>
         );
       default:
         return (
-          <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-600">
+          <span className="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-medium bg-muted text-text-secondary">
             {status}
           </span>
         );
@@ -111,15 +111,21 @@ export function WebhookDetailsModal({ webhook, onClose }: WebhookDetailsModalPro
   const totalPages = Math.ceil(total / pageSize);
 
   return (
-    <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4" onClick={onClose}>
+    <div 
+      className="modal-overlay" 
+      onClick={onClose}
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="webhook-details-title"
+    >
       <div 
-        className="bg-surface rounded-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden shadow-2xl animate-in zoom-in-95 duration-200"
+        className="modal-container-lg overflow-hidden animate-in zoom-in-95 duration-200"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-border">
           <div>
-            <h2 className="text-lg font-semibold text-text-primary">
+            <h2 id="webhook-details-title" className="text-lg font-semibold text-text-primary">
               Entregas do Webhook
             </h2>
             <p className="text-sm text-text-secondary mt-1">
@@ -128,9 +134,10 @@ export function WebhookDetailsModal({ webhook, onClose }: WebhookDetailsModalPro
           </div>
           <button
             onClick={onClose}
-            className="p-2 hover:bg-background rounded-lg transition-colors"
+            className="w-10 h-10 flex items-center justify-center rounded-xl hover:bg-muted transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            aria-label="Fechar modal"
           >
-            <i className="fi fi-rr-cross text-text-secondary"></i>
+            <i className="fi fi-rr-cross text-text-secondary" aria-hidden="true"></i>
           </button>
         </div>
 
@@ -143,10 +150,10 @@ export function WebhookDetailsModal({ webhook, onClose }: WebhookDetailsModalPro
                 key={status}
                 onClick={() => { setFilter(status); setPage(0); }}
                 className={`
-                  px-3 py-1.5 rounded-lg text-xs font-medium transition-colors
+                  px-3 py-1.5 rounded-xl text-xs font-medium transition-colors
                   ${filter === status
-                    ? 'bg-brand text-white'
-                    : 'bg-surface text-text-secondary hover:text-text-primary'
+                    ? 'bg-brand-50 text-brand border border-brand'
+                    : 'bg-surface text-text-secondary hover:text-text-primary border border-border'
                   }
                 `}
               >

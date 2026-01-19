@@ -214,7 +214,7 @@ export default function KanbanPage() {
   }
 
   return (
-    <div className="h-full flex flex-col overflow-hidden">
+    <div className="h-full flex flex-col overflow-hidden" style={{ maxHeight: 'calc(100vh - 48px)' }}>
       {/* Header */}
       <div className="flex-shrink-0">
         <PageHeader
@@ -262,7 +262,7 @@ export default function KanbanPage() {
               setSelectedChannelId('');
               setSelectedAgentId('');
             }}
-            className="h-[42px] flex items-center gap-1.5 px-3 text-sm text-text-secondary hover:text-text-primary bg-surface border border-border rounded-xl hover:bg-surface-hover transition-colors"
+            className="h-[42px] flex items-center gap-1.5 px-3 text-sm text-text-secondary hover:text-text-primary bg-surface border border-border rounded-xl hover:bg-muted transition-colors"
             title="Limpar filtros"
           >
             <i className="fi fi-rr-cross-small"></i>
@@ -281,7 +281,7 @@ export default function KanbanPage() {
       </div>
 
       {/* Kanban Board */}
-      <div className="flex flex-col sm:flex-row gap-4 overflow-x-auto flex-1 min-h-0">
+      <div className="flex flex-col sm:flex-row gap-4 overflow-x-auto overflow-y-hidden flex-1 min-h-0 pb-2">
         {displayData && (
           <>
             <KanbanColumn
